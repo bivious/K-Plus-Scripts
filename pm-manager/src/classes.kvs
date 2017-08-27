@@ -1,0 +1,616 @@
+class("qupm::setup","widget")
+{
+	function saveSetUp()
+	{
+		@%setup = $config.open(QUPMM.kvc)
+		config.write @%setup PMMSG $0
+		config.write @%setup PMLOG $1
+		config.close @%setup
+		%G_pmReplyMsg = $0
+		%G_pmPMLog = $1
+		return $true
+	}
+
+	function loadSetUp()
+	{
+		@%setup = $config.open(QUPMM.kvc)
+		@%cfg_pmreply = $config.read(@%setup, PMMSG)
+		@%cfg_pmlog = $config.read(@%setup, PMLOG)
+		config.close @%setup
+		return $true
+	}
+
+	function destructor()
+	{
+		# Added for completeness
+	}
+
+	function constructor()
+	{
+		@%version = "1.0.0"
+		@$loadSetUp()
+		@%layout = $new(layout, $$)
+		@%layout->$setSpacing(10)
+		@$setGeometry(0,0,500,220)
+		@$setMinimumWidth(500)
+		@$setMinimumHeight(220)
+		@$setMaximumHeight(220)
+		@$setWindowTitle("PM Manager - Setup v@%version")
+		@$setWFlags(dialog)
+		@$centerToScreen
+		@$setFocus()
+
+		@%hboxPMMO = $new(hbox, $$)
+
+		@%lblInfo1 = $new(label, @%hboxPMMO)
+		@%lblInfo1->$setText("<h3>Personalize the Notice Message Sent</h3>")
+		@%lblInfo1->$setAlignment(Center)
+
+		@%lblInfo2 = $new(label, @%hboxPMMO)
+		@%lblInfo2->$setText("Leave as is to use the default message")
+		@%lblInfo2->$setAlignment(Center)
+
+		@%ntfLabel = $new(label, @%hboxPMMO)
+		@%ntfLabel->$setText("Custom notification setup:")
+
+		@%lnePMMsg = $new(lineedit, @%hboxPMMO)
+		@%lnePMMsg->$setTooltip("<p><pre><b>Enter your personalized message to send as notice.</b>\n<b>The default message is:</b>" \
+								"\n<b>Automated Message:</b> <u><i>Uninvited PM's</i></u> are not being accepted!</pre></p>")
+
+		@%btnPMAdd = $new(button, @%hboxPMMO)
+		@%btnPMAdd->$setText("&Add")
+		@%btnPMAdd->$setTooltip("<p><pre>Add your personalized message.</pre></p>")
+		@%btnPMAdd->$setEnabled(0)
+
+		@%btnPMEdt = $new(button, @%hboxPMMO)
+		@%btnPMEdt->$setText("&Edit")
+		@%btnPMEdt->$setTooltip("<p><pre>Edit your current personalized message.</pre></p>")
+		@%btnPMEdt->$setEnabled(0)
+
+		@%btnPMRst = $new(button, @%hboxPMMO)
+		@%btnPMRst->$setText("&Reset")
+		@%btnPMRst->$setTooltip("<p><pre>Reset your personalized message to default.</pre></p>")
+		@%btnPMRst->$setEnabled(0)
+
+		@%btnSSave = $new(button, @%hboxPMMO)
+		@%btnSSave->$setText("&Save")
+		@%btnSSave->$setTooltip("<p><pre>Save changes and close options.</pre></p>")
+		@%btnSSave->$setEnabled(0)
+
+		@%btnCncel = $new(button, @%hboxPMMO)
+		@%btnCncel->$setText("&Cancel")
+		@%btnCncel->$setTooltip("<p><pre>Cancel changes and close options.</pre></p>")
+
+		if(@%cfg_pmreply == $false)
+		{
+			@%lnePMMsg->$setText("Click here to add your own personalized message...")
+			@%btnPMAdd->$setEnabled(1)
+		}
+		else
+		{
+			@%lnePMMsg->$setText(@%cfg_pmreply)
+			@%btnPMAdd->$setEnabled(0)
+			@%btnPMRst->$setEnabled(1)
+			@%btnPMEdt->$setEnabled(1)
+		}
+
+		@%ckxPMLog = $new(checkbox, @%hboxPMMO)
+		@%ckxPMLog->$setToolTip("<p><pre><b>Checked</b>   Toggle notification <b>ON</b> (Default)\n<b>Unchecked</b> " \
+								"Toggle notification <b>OFF</b></pre></p>")
+		if(@%cfg_pmlog == 1)
+		{
+			@%ckxPMLog->$setText("Notification of blocked queries is ON")
+			@%ckxPMLog->$setChecked($true)
+		}
+		else
+		{
+			@%ckxPMLog->$setText("Notification of blocked queries is OFF")
+			@%ckxPMLog->$setChecked($false)
+		}
+
+		@%layout->$addMultiCellWidget(@%lblInfo1, 0,0,0,4)
+		@%layout->$addMultiCellWidget(@%lblInfo2, 0,2,0,4)
+
+		@%layout->$addMultiCellWidget(@%ntfLabel, 2,4,0,2)
+		@%layout->$addMultiCellWidget(@%lnePMMsg, 4,5,0,4)
+		@%layout->$addMultiCellWidget(@%ckxPMLog, 4,10,0,4)
+
+		@%layout->$addMultiCellWidget(@%btnPMAdd, 9,12,0,0)
+		@%layout->$addMultiCellWidget(@%btnPMRst, 9,12,1,1)
+		@%layout->$addMultiCellWidget(@%btnPMEdt, 9,12,2,2)
+		@%layout->$addMultiCellWidget(@%btnSSave, 9,12,3,3)
+		@%layout->$addMultiCellWidget(@%btnCncel, 9,12,4,4)
+
+		privateimpl(@%btnCncel, clickEvent)
+		{
+			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: No changes were made to the current settings."
+			%G_qupmManager->%btnOptions->$setEnabled(1)
+			delete @$parent->$parent
+		}
+
+		privateimpl(@%lnePMMsg, mousePressEvent)
+		{
+			if(@$text() == ""Click here to add your own personalized message... || @$text() == "")
+				@$setText("")
+		}
+
+		privateimpl(@%lnePMMsg, keyPressEvent)
+		{
+			if($0 == "Return")
+				@$emit("enterPressed")
+		}
+		objects.connect @%lnePMMsg enterPressed @%btnPMAdd clickEvent
+
+		privateimpl(@%ckxPMLog, setlog)
+		{
+			%state = @$parent->$parent->%ckxPMLog->$isChecked()
+			if(%state == $true)
+			{
+				@%cfg_pmlog = 1
+				@$parent->$parent->%ckxPMLog->$setText("Notification of blocked queries is ON")
+				%status = $b"[ON]"$b
+				echo -w=$active -i=$msgtype(GenericSuccess) "Notice: The notification has been turned %status. Don't forget to save this change."
+				@$parent->$parent->%btnSSave->$setEnabled(1)
+			}
+			else
+			{
+				@%cfg_pmlog = 0
+				@$parent->$parent->%ckxPMLog->$setText("Notification of blocked queries is OFF")
+				%status = $b"[OFF]"$b
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The notification has been turned %status. Don't forget to save this change."
+				@$parent->$parent->%btnSSave->$setEnabled(1)
+			}
+		}
+		objects.connect @%ckxPMLog toggled @%ckxPMLog setlog
+
+		privateimpl(@%btnPMAdd, clickEvent)
+		{
+			%msgtext = @$parent->$parent->%lnePMMsg->$text()
+			if((%msgtext == "") || (%msgtext == "Click here to add your own personalized message..." ))
+			{
+				echo -w=$active -i=$msgtype(GenericError) "Error: Invalid message entered. Try again!"
+				@$parent->$parent->%lnePMMsg->$setText("Click here to add your own personalized message...")
+				halt;
+			}
+
+			if((%msgtext != "") && (%msgtext != "Click here to add your own personalized message..."))
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Personalized Message: [ $b%msgtext$b ] Don't forget to save this message."
+				@$parent->$parent->%btnSSave->$setEnabled(1)
+				halt;
+			}
+
+		}
+
+		privateimpl(@%btnPMRst, clickEvent)
+		{
+
+			@$parent->$parent->%lnePMMsg->$setText("Click here to add your own personalized message...")
+			%reset = $b"Reset to default."$b
+			echo -w=$active -i=$msgtype(GenericWarning) "Personalized Message: [ %reset ] Don't forget to save after reset."
+			@$parent->$parent->%btnSSave->$setEnabled(1)
+			@$parent->$parent->%btnPMAdd->$setEnabled(1)
+			@$parent->$parent->%btnPMRst->$setEnabled(0)
+			@$parent->$parent->%btnPMEdt->$setEnabled(0)
+			@%cfg_pmreply = $false
+		}
+
+		privateimpl(@%btnPMEdt, clickEvent)
+		{
+			%ereply = $b"[ Enter ]"$b
+			echo -w=$active -i=$msgtype(GenericWarning) "Notice: Edit your personalized message and press the %ereply key on your keyboard."
+			@$parent->$parent->%btnPMEdt->$setEnabled(0)
+			@$parent->$parent->%lnePMMsg->$setFocus()
+		}
+
+		privateimpl(@%btnSSave, clickEvent)
+		{
+			@%cfg_pmreply = @$parent->$parent->%lnePMMsg->$text()
+			if(@%cfg_pmreply == "Click here to add your own personalized message...")
+				@%cfg_pmreply = $false;
+
+			@%cfg_pmlog = @$parent->$parent->%ckxPMLog->$isChecked()
+			@$parent->$parent->$saveSetUp(@%cfg_pmreply, @%cfg_pmlog)
+			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The current settings have been saved."
+			%G_qupmManager->%btnOptions->$setEnabled(1)
+			delete @$parent->$parent
+		}
+
+		privateimpl($$, closeEvent)
+		{
+			echo -w=$active -i=$msgtype(GenericWarning) "Notice: The PM Manager's Options menu has been closed."
+			%G_qupmManager->%btnOptions->$setEnabled(1)
+			delete $$
+		}
+	}
+
+}
+
+class("qupm::pmcloser","object")
+{
+	function closePMWin($0 = nick)
+	{
+		%ircContext = $window.context($console);
+		%UserValid = $false
+		%blockedWID = $query($0, %ircContext)
+		window.close -q %blockedWID
+		return $true
+	}
+
+}
+
+class("qupm::main","widget")
+{
+	function saveList($0 = flag)
+	{
+		%mywhitelist = $file.localdir("mywhitelist.txt")
+		%outFile = %mywhitelist
+		%conf = $config.open(%outFile, w)
+		config.clearsection %conf whitelist
+		config.setsection %conf whitelist
+		unset %G_pmWhiteList
+		%count = $$->%lbTrustedUsers->$count()
+
+		for(%i = 0; %i < %count; %i++)
+		{
+			config.write %conf %i $$->%lbTrustedUsers->$textAt(%i)
+			%G_pmWhiteList[%i] = $$->%lbTrustedUsers->$textAt(%i)
+		}
+
+		config.close %conf
+		if($0 != 1)
+		{
+			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The whitelist has been saved successfully."
+		}
+	}
+
+	function loadList()
+	{
+		%mywhitelist = $file.localdir("mywhitelist.txt")
+		%inFile = %mywhitelist
+		%conf = $config.open(%inFile, r)
+		config.setsection %conf whitelist
+		%whitelist = $config.keylist(%conf)
+
+		foreach(%i, %whitelist)
+		{
+			%trusteduser[%i] = $config.read(%conf, %i)
+		}
+
+		config.close %conf
+		unset %G_pmWhiteList
+		%t = %trusteduser[]#
+		for(%i = 0; %i < %t; %i++)
+		{
+			@%lbTrustedUsers->$insertItem(%trusteduser[%i])
+			%G_pmWhiteList[%i] = %trusteduser[%i]
+		}
+	}
+
+	function destructor()
+	{
+		# Added for completeness.
+	}
+
+	function constructor()
+	{
+		@%version = "1.0.0"
+		@%layout = $new(layout, $$)
+		@%layout->$setSpacing(6)
+		@$setGeometry(0,0,600,350)
+		@$setMinimumWidth(600)
+		@$setMaximumWidth(600)
+		@$setMinimumHeight(350)
+		@$setWindowTitle("PM Manager v@%version")
+		@$setWFlags(dialog)
+		@$centerToScreen()
+		@$setFocus()
+
+		@%hboxPMM = $new(hbox, $$)
+		@%vboxPMM = $new(vbox, $$)
+		@%vboxPMM->$setMargin(10)
+		@%vboxPMM->$setMinimumHeight(100)
+		@%vboxPMM->$setMaximumHeight(100)
+
+		@%hboxCMDS1 = $new(hbox, $$)
+		@%hboxCMDS2 = $new(hbox, $$)
+
+		@%tmpUserlabel = $new(label, $$)
+		@%tmpUserlabel->$setText("Enter a nickname:")
+
+		@%leTmpUserAdd = $new(lineedit, $$)
+		@%leTmpUserAdd->$setText("Type a temporary nick here...")
+
+		if(%G_pmTmpUser != $null)
+		{
+			@%leTmpUserAdd->$setText(%G_pmTmpUser);
+		}
+
+		@%btnTmpUserAdd = $new(button, $$)
+		@%btnTmpUserAdd->$setText("A&dd User")
+		@%btnTmpUserAdd->$setTooltip("<p><pre>Click to add the user to your temporary whitelist.</pre></p>")
+
+		if(%G_pmTmpUser != $null)
+		{
+			@%btnTmpUserAdd->$setText("Re&move User")
+			@%btnTmpUserAdd->$setTooltip("<p><pre>Click to remove the user from your temporary whitelist.</pre></p>")
+		}
+
+		@%chanUserslbl = $new(label, $$)
+		@%chanUserslbl->$setText("Channel Users")
+
+		@%lbChanUsers = $new(listbox, $$)
+		@%lbChanUsers->$setToolTip("<p><pre>Highlight the user to add to your whitelist.</pre></p>")
+
+		@%btnAddUser = $new(button, @%vboxPMM)
+		@%btnAddUser->$setTooltip("<p><pre>Add the highlighted user to the whitelist.</pre></p>")
+		@%btnAddUser->$setMaximumWidth(50)
+		@%btnAddUser->$setImage(39)
+
+		@%btnRemUser = $new(button, @%vboxPMM)
+		@%btnRemUser->$setTooltip("<p><pre>Remove the highlighted user from the whitelist.</pre></p>")
+		@%btnRemUser->$setMaximumWidth(50)
+		@%btnRemUser->$setImage(40)
+
+		@%trustUserslbl = $new(label, $$)
+		@%trustUserslbl->$setText("Whitelisted Users")
+
+		@%lbTrustedUsers = $new(listbox, $$)
+		@%lbTrustedUsers->$setToolTip("<p><pre>Highlight the user to remove from the whitelist.</pre></p>")
+
+		%id = $active()
+		if($window.type(%id) == "channel")
+		{
+			%channelusers = $chan.users(%id)
+			foreach(%i,%channelusers)
+			{
+				@%lbChanUsers->$insertItem(%i)
+			}
+			@$loadList()
+		}
+
+		@%btnPMStatus = $new(button, @%hboxCMDS1)
+		@%btnPMStatus->$setText("&Blocker ON")
+		@%btnPMStatus->$setTooltip("<p><pre>Click to enable the PM blocker.</pre></p>")
+
+		if($isEventEnabled(OnQueryMessage,blockPM))
+		{
+			@%btnPMStatus->$setText("&Blocker OFF")
+			@%btnPMStatus->$setTooltip("<p><pre>Click to disable the PM blocker.</pre></p>")
+		}
+
+		@%btnOptions = $new(button, @%hboxCMDS2)
+		@%btnOptions->$setText("&Options")
+		@%btnOptions->$setTooltip("<p><pre>Set the personalized message and notification options.</pre></p>")
+
+		@%btnRfrsh = $new(button, @%hboxCMDS1)
+		@%btnRfrsh->$setText("&Refresh")
+		@%btnRfrsh->$setTooltip("<p><pre>Refresh the channel users list.</pre></p>")
+
+		@%btnExit = $new(button, @%hboxCMDS2)
+		@%btnExit->$setText("&Exit")
+		@%btnExit->$setTooltip("<p><pre>Exit the PM Manager.</pre></p>")
+
+		@%layout->$addMultiCellWidget(@%tmpUserlabel, 0,0,0,1)
+		@%layout->$addMultiCellWidget(@%leTmpUserAdd, 0,0,2,4)
+		@%layout->$addMultiCellWidget(@%btnTmpUserAdd, 0,0,5,5)
+
+		@%layout->$addMultiCellWidget(@%chanUserslbl, 1,1,0,2)
+		@%layout->$addMultiCellWidget(@%trustUserslbl, 1,1,4,5)
+
+		@%layout->$addMultiCellWidget(@%vboxPMM, 7,12,3,3)
+
+		@%layout->$addMultiCellWidget(@%lbChanUsers, 2,18,0,2)
+		@%layout->$addMultiCellWidget(@%lbTrustedUsers, 2,18,4,5)
+
+		@%layout->$addMultiCellWidget(@%hboxCMDS1, 19,19,0,2)
+		@%layout->$addMultiCellWidget(@%hboxCMDS2, 19,19,4,5)
+
+		privateimpl(@%leTmpUserAdd, mousePressEvent)
+		{
+			if(@$text() == "Type a temporary nick here..." || @$text() == "")
+				@$setText("")
+		}
+
+		privateimpl(@%leTmpUserAdd, keyPressEvent)
+		{
+			if($0 == "Return")
+				@$emit("enterPressed")
+		}
+
+		objects.connect @%leTmpUserAdd enterPressed @%btnTmpUserAdd clickEvent
+		privateimpl(@%btnTmpUserAdd, clickEvent)
+		{
+			if(%G_pmTmpUser != $null)
+			{
+				@$parent->%leTmpUserAdd->$setText("Type a temporary nick here...")
+				@$parent->%btnTmpUserAdd->$setText("A&dd User")
+				@$parent->%btnTmpUserAdd->$setTooltip("<p><pre>Click to add the temporary user.</pre></p>")
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b%G_pmTmpUser$b has been successfully removed from your temporary whitelist."
+				unset %G_pmTmpUser
+				halt;
+			}
+
+			%user = @$parent->%leTmpUserAdd->$text()
+			if((%user == "") || (%user == "Type a temporary nick here..."))
+			{
+				echo -w=$active -i=$msgtype(GenericError) "Error: Invalid temporary nick entry. Try again!"
+				halt;
+			}
+
+			for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
+			{
+				if(%G_pmWhiteList[%i] == %user)
+				{
+					echo -w=$active -i=$msgtype(GenericWarning) "Notice: The $b%user$b nick is already in your whitelist."
+					@$parent->%leTmpUserAdd->$setText("")
+					halt;
+				}
+			}
+
+			if($my.nick == %user)
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b%user$b is yours. No need to add yourself."
+				@$parent->%leTmpUserAdd->$setText("")
+				halt;
+			}
+
+			if($isWellKnown(%user))
+			{
+				%G_pmTmpUser = %user
+				@$parent->%btnTmpUserAdd->$setText("Re&move User")
+				@$parent->%btnTmpUserAdd->$setTooltip("<p><pre>Click to remove the temporary user.</pre></p>")
+				echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b%user$b has been successfully added to your temporary whitelist."
+				halt;
+			}
+			else
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b%user$b is not currently available. Try again later!"
+				@$parent->%leTmpUserAdd->$setText("")
+				halt;
+			}
+		}
+
+		privateimpl(@%btnAddUser, clickEvent)
+		{
+			%count = @$parent->$parent->%lbChanUsers->$count()
+			if(%count == "0")
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The Channel Users list is empty or there are no users to add."
+				halt;
+			}
+
+			%selectedid = @$parent->$parent->%lbChanUsers->$currentItem()
+			if(%selectedid == "-1")
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: No nick selection was made. Select a nick to add and try again."
+				halt;
+			}
+
+			%item = @$parent->$parent->%lbChanUsers->$textAt(%selectedid)
+			if($my.nick == %item)
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b%item$b is yours. No need to add yourself."
+				halt;
+			}
+			@$parent->$parent->$checkDupe(%item)
+		}
+
+		privateimpl(@%btnExit, clickEvent)
+		{
+			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager has been closed."
+			@$parent->$parent->$hide()
+		}
+
+		privateimpl(@%btnRfrsh, clickEvent)
+		{
+			%id = $active()
+			if($window.type(%id) != "channel")
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: This is not a valid channel window."
+				halt;
+			}
+
+			if($window.type(%id) == "channel")
+			{
+				@$parent->$parent->%lbChanUsers->$clear()
+				%channelusers = $chan.users(%id)
+				foreach(%i, %channelusers)
+				{
+					@$parent->$parent->%lbChanUsers->$insertItem(%i)
+				}
+			}
+			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The $b$chan.name(%id)$b Channel Users list has been refreshed successfully."
+		}
+
+		privateimpl(@%btnRemUser, clickEvent)
+		{
+			%count = @$parent->$parent->%lbTrustedUsers->$count()
+			if(%count == "0")
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: Your whitelist is empty. No users to remove."
+				halt;
+			}
+
+			%selectedid = @$parent->$parent->%lbTrustedUsers->$currentItem()
+			if(%selectedid == "-1")
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: No nick selection was made. Select a nick to remove and try again."
+				halt;
+			}
+
+			%user = @$parent->$parent->%lbTrustedUsers->$textAt(%selectedid)
+			@$parent->$parent->%lbTrustedUsers->$removeItem(%selectedid)
+			echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b%user$b has been successfully removed from your whitelist."
+			@$parent->$parent->$saveList(1)
+		}
+
+		privateimpl(@%btnOptions, clickEvent)
+		{
+			%optpanel = $new(qupm::setup)
+			%optpanel->$show()
+			@$parent->$parent->%btnOptions->$setEnabled(0)
+		}
+
+		privateimpl(@%btnPMStatus, clickEvent)
+		{
+			if(!$isEventEnabled(OnQueryMessage,blockPM))
+			{
+				eventctl -e OnQueryMessage blockPM
+				@$parent->$parent->%btnPMStatus->$setText("&Blocker OFF")
+				@$parent->$parent->%btnPMStatus->$setTooltip("<p><pre>Click to disable the PM blocker.</pre></p>")
+				%reply = $k(9)"ON"$k
+				echo -w=$active -i=$msgtype(GenericStatus) "PM Blocker Status:" $b%reply$b
+				halt;
+			}
+
+			if($isEventEnabled(OnQueryMessage,blockPM))
+			{
+				eventctl -d OnQueryMessage blockPM
+				@$parent->$parent->%btnPMStatus->$setText("&Blocker ON")
+				@$parent->$parent->%btnPMStatus->$setTooltip("<p><pre>Click to enable the PM blocker.</pre></p>")
+				%reply = $k(4)"OFF"$k
+				echo -w=$active -i=$msgtype(GenericStatus) "PM Blocker Status:" $b%reply$b
+				halt;
+			}
+		}
+
+		privateimpl($$, closeEvent)
+		{
+			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager has been closed."
+			delete $$
+		}
+	}
+
+	function checkDupe($0 = nick)
+	{
+		%count = $$->%lbTrustedUsers->$count()
+		%user = $0
+		for(%i = 0; %i < %count; %i++)
+		{
+			if($$->%lbTrustedUsers->$textAt(%i) == %user)
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Duplicated Entry: The nick $b%user$b has already been added to whitelist!"
+				%G_bDupeUser = $true
+				halt;
+			}
+		}
+
+		$$->%lbTrustedUsers->$insertItem(%user)
+		%G_pmWhiteList[] <+ %user
+		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The nick $b%user$b has been successfully added to your whitelist."
+		%count = $$->%lbChanUsers->$count()
+
+		for(%i = 0; %i < %count; %i++)
+		{
+			if($$->%lbChanUsers->$textAt(%i) == %user)
+			{
+				$$->%lbChanUsers->$removeItem(%i)
+				break;
+			}
+		}
+		$$->$saveList(1)
+		%G_bDupeUser = $false
+	}
+}
+

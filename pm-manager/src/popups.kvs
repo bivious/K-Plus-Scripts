@@ -1,0 +1,132 @@
+defpopup(QUPM.users)
+{
+	prologue
+	{
+		if($objects.exists(%G_qupmManager))
+		{
+			%G_qupmManager->$hide()
+			unset %G_qupmManager
+		}
+
+		%:MyNick = $false
+		if($my.nick == $0)
+		{
+			%:MyNick = $true;
+		}
+
+		%:UserValid = $false
+		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
+		{
+			if(%G_pmWhiteList[%i] == $0)
+			{
+				%:UserValid == $true
+				break;
+			}
+		}
+		%:ownNickLabelText = "<p>Own Nick: <b>$0</b> - Nothing to do!</p>"
+	}
+
+	item(Add $0 to Whitelist,$icon(plus)) (!%:UserValid && !%G_pmTmpUser == $0 && !%:MyNick)
+	{
+		%G_pmWhiteList[] <+ $0
+		%mywhitelist = $file.localdir("mywhitelist.txt")
+		%outFile = %mywhitelist
+		%conf = $config.open(%outFile, w)
+		config.clearsection %conf whitelist
+		config.setsection %conf whitelist
+
+		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
+		{
+			config.write %conf %i %G_pmWhiteList[%i];
+		}
+
+		config.close %conf
+		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The nick $b$0$b has been successfully added to your whitelist."
+		%:UserValid = $true
+	}
+
+	item(Remove $0 from Whitelist,$icon(minus)) (%:UserValid && !%:MyNick)
+	{
+		foreach(%user, %G_pmWhiteList)
+		{
+			if(%user != $0)
+			{
+				%temp_wl[] <+ %user
+			}
+		}
+
+		unset %G_pmWhiteList
+		%mywhitelist = $file.localdir("mywhitelist.txt")
+		%outFile = %mywhitelist
+		%conf = $config.open(%outFile, w)
+		config.clearsection %conf whitelist
+		config.setsection %conf whitelist
+
+		for(%i = 0; %i < %temp_wl[]#; %i++)
+		{
+			config.write %conf %i %temp_wl[%i];
+			%G_pmWhiteList[] <+ %temp_wl[%i]
+		}
+
+		config.close %conf
+		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b$0$b has been successfully removed from your whitelist."
+		%:UserValid = $false
+	}
+
+	item(Add $0 as Temporary User,$icon(join)) (!%G_pmTmpUser && !%:UserValid && !%:MyNick)
+	{
+		%G_pmTmpUser = $0
+		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has been successfully added to your temporary whitelist."
+	}
+
+	item(Remove $0 as Temporary User,$icon(part)) (%G_pmTmpUser && !%:UserValid && !%:MyNick)
+	{
+		%G_pmTmpUser = $false
+		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b$0$b has been successfully removed from your temporary whitelist."
+	}
+
+	label(%:ownNickLabelText) (%:MyNick)
+}
+popup.delitem -q channel QUPM.separator0
+popup.addSeparator channel QUPM.separator0
+popup.delitem -q channel QUPM.users
+popup.addExtPopup channel QUPM.users "PM Manager" 47 QUPM.users
+
+defpopup(QUPM.controls)
+{
+	prologue
+	{
+		%:Blocked = $isEventEnabled(OnQueryMessage,blockPM)
+	}
+
+	item(Open PM Manager,$icon(query))
+	{
+		if(!$objects.exists(%G_qupmManager))
+		{
+			%G_qupmManager = $new(qupm::main)
+			%G_qupmManager->$show()
+		}
+		else
+		{
+			%G_qupmManager->$hide()
+			%G_qupmManager->$show()
+		}
+	}
+
+	item(Enable PM Blocker,$icon(accept)) (!%:Blocked)
+	{
+		eventctl -e OnQueryMessage blockPM
+		echo -w=$window(%winid) -i=$msgtype(GenericSuccess) "Notice: The PM blocker has been successfully enabled!"
+	}
+
+	item(Disable PM Blocker,$icon(discard)) (%:Blocked)
+	{
+		eventctl -d OnQueryMessage blockPM
+		echo -w=$window(%winid) -i=$msgtype(GenericWarning) "Notice: The PM blocker has been successfully disabled!"
+	}
+}
+popup.delitem -q channeltextview QUPM.separator0
+popup.addSeparator channeltextview QUPM.separator0
+popup.delitem -q channeltextview QUPM.controls
+popup.addExtPopup channeltextview QUPM.controls "PM Manager" 47 QUPM.controls
+
