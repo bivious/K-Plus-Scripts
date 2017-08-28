@@ -1,3 +1,24 @@
+################################################################################
+#
+#   This file is part of the PM Manager Addon
+#   Copyright (C) 2017 slaboff (slaboff at no mail dot not)
+#
+#   This program is FREE software. You can redistribute it and/or
+#   modify it under the terms of the GNU General Public License
+#   as published by the Free Software Foundation; either version 2
+#   of the License, or (at your option) any later version.
+#
+#   This program is distributed in the HOPE that it will be USEFUL,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#   See the GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program. If not, write to the Free Software Foundation,
+#   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+################################################################################
+
 defpopup(QUPM.users)
 {
 	prologue
@@ -23,10 +44,11 @@ defpopup(QUPM.users)
 				break;
 			}
 		}
+
 		%:ownNickLabelText = "<p>Own Nick: <b>$0</b> - Nothing to do!</p>"
 	}
 
-	item(Add $0 to Whitelist,$icon(plus)) (!%:UserValid && !%G_pmTmpUser == $0 && !%:MyNick)
+	item(Add $0 to Whitelist, $icon(plus)) (!%:UserValid && %G_pmTmpUser != $0 && !%:MyNick)
 	{
 		%G_pmWhiteList[] <+ $0
 		%mywhitelist = $file.localdir("mywhitelist.txt")
@@ -45,7 +67,7 @@ defpopup(QUPM.users)
 		%:UserValid = $true
 	}
 
-	item(Remove $0 from Whitelist,$icon(minus)) (%:UserValid && !%:MyNick)
+	item(Remove $0 from Whitelist, $icon(minus)) (%:UserValid && !%:MyNick)
 	{
 		foreach(%user, %G_pmWhiteList)
 		{
@@ -73,13 +95,13 @@ defpopup(QUPM.users)
 		%:UserValid = $false
 	}
 
-	item(Add $0 as Temporary User,$icon(join)) (!%G_pmTmpUser && !%:UserValid && !%:MyNick)
+	item(Add $0 as Temporary User, $icon(join)) (!%G_pmTmpUser && !%:UserValid && !%:MyNick)
 	{
 		%G_pmTmpUser = $0
 		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has been successfully added to your temporary whitelist."
 	}
 
-	item(Remove $0 as Temporary User,$icon(part)) (%G_pmTmpUser && !%:UserValid && !%:MyNick)
+	item(Remove $0 as Temporary User, $icon(part)) (%G_pmTmpUser == $0 && !%:UserValid && !%:MyNick)
 	{
 		%G_pmTmpUser = $false
 		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b$0$b has been successfully removed from your temporary whitelist."
@@ -88,9 +110,24 @@ defpopup(QUPM.users)
 	label(%:ownNickLabelText) (%:MyNick)
 }
 popup.delitem -q channel QUPM.separator0
+popup.delitem -q querytextview QUPM.separator0
 popup.addSeparator channel QUPM.separator0
+popup.addSeparator querytextview QUPM.separator0
 popup.delitem -q channel QUPM.users
-popup.addExtPopup channel QUPM.users "PM Manager" 47 QUPM.users
+popup.delitem -q querytextview QUPM.users
+
+if($system.ostype != "UNIX")
+{
+	%ticon = $file.localdir(\pics\\pmmanager_small.png)
+	%ficon = $str.replace(%ticon, $char(92), $char(92)$char(92), 1)
+	popup.addExtPopup channel QUPM.users "PM Manager" %ficon QUPM.users
+	popup.addExtPopup querytextview QUPM.users "PM Manager" %ficon QUPM.users
+}
+else
+{
+	popup.addExtPopup channel QUPM.users "PM Manager" $file.localdir(pics/pmmanager_small.png) QUPM.users
+	popup.addExtPopup querytextview QUPM.users "PM Manager" $file.localdir(pics/pmmanager_small.png) QUPM.users
+}
 
 defpopup(QUPM.controls)
 {
@@ -99,7 +136,7 @@ defpopup(QUPM.controls)
 		%:Blocked = $isEventEnabled(OnQueryMessage,blockPM)
 	}
 
-	item(Open PM Manager,$icon(query))
+	item(Open PM Manager, $icon(query))
 	{
 		if(!$objects.exists(%G_qupmManager))
 		{
@@ -113,20 +150,36 @@ defpopup(QUPM.controls)
 		}
 	}
 
-	item(Enable PM Blocker,$icon(accept)) (!%:Blocked)
+	item(Enable PM Blocker, $icon(accept)) (!%:Blocked)
 	{
 		eventctl -e OnQueryMessage blockPM
 		echo -w=$window(%winid) -i=$msgtype(GenericSuccess) "Notice: The PM blocker has been successfully enabled!"
 	}
 
-	item(Disable PM Blocker,$icon(discard)) (%:Blocked)
+	item(Disable PM Blocker, $icon(discard)) (%:Blocked)
 	{
 		eventctl -d OnQueryMessage blockPM
 		echo -w=$window(%winid) -i=$msgtype(GenericWarning) "Notice: The PM blocker has been successfully disabled!"
+	}
+
+	separator
+
+	item(Help, $icon(questionmark))
+	{
+		help.open -m $file.localdir("help/pmm-help.html")
 	}
 }
 popup.delitem -q channeltextview QUPM.separator0
 popup.addSeparator channeltextview QUPM.separator0
 popup.delitem -q channeltextview QUPM.controls
-popup.addExtPopup channeltextview QUPM.controls "PM Manager" 47 QUPM.controls
 
+if($system.ostype != "UNIX")
+{
+	%ticon = $file.localdir(\pics\\pmmanager_small.png)
+	%ficon = $str.replace(%ticon, $char(92), $char(92)$char(92), 1)
+	popup.addExtPopup channeltextview QUPM.controls "PM Manager" %ficon QUPM.controls
+}
+else
+{
+	popup.addExtPopup channeltextview QUPM.controls "PM Manager" $file.localdir(pics/pmmanager_small.png) QUPM.controls
+}

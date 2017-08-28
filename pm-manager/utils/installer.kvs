@@ -1,8 +1,28 @@
+################################################################################
+#
+#   This file is part of the PM Manager Addon
+#   Copyright (C) 2017 slaboff (slaboff at no mail dot not)
+#
+#   This program is FREE software. You can redistribute it and/or
+#   modify it under the terms of the GNU General Public License
+#   as published by the Free Software Foundation; either version 2
+#   of the License, or (at your option) any later version.
+#
+#   This program is distributed in the HOPE that it will be USEFUL,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#   See the GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program. If not, write to the Free Software Foundation,
+#   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+################################################################################
 /*
 	 A helper class for installing and parsing files,
 	 and generating an uninstallation alias on the fly.
 
-	Example :
+	Example:
 		include "utils/installer.kvs"
 		%installer = $new(installer,0,myinstaller)
 		%installer->$copyFiles(pics,*.png,$file.localdir(pics))
@@ -13,9 +33,8 @@
 	callback script.
 
 	Warnings:
-		1) Declaration of aliases, popups, etc, in source files
-		(.kvs) must be in a similar format
-		as when you export them directly from kvirc.
+		1) Declaration of aliases, popups, etc., in source files(.kvs)
+		must be in a similar format as when you export them directly from kvirc.
 		Example:
 			alias(myalias)
 			defpopup(mypopup)
@@ -23,7 +42,7 @@
 		existing popup,this item won't be registered
 		automatically for uninstallation by this installer script.
 		You should typically identify the item you added using
-		the "id" parameter. See this example where the id is
+		the "ID" parameter. See this example where the ID is
 		"myaddon::myitem":
 			defpopup -m (channeltextview)
 			{
@@ -32,8 +51,7 @@
 					...
 				}
 			}
-		Then, you add this line to you uninstall callback
-		script:
+		Then, you add this line to you uninstall callback script:
 			delpopupitem channeltextview myaddon::myitem
 */
 
@@ -45,7 +63,8 @@ class(installer,object)
 
 	copyFiles($0 = source dir,$1 = file regexp,$2 = target dir)
 	{
-		if(!$file.exists($0))return
+		if(!$file.exists($0))
+			return
 		if($isempty($0))
 		{
 			echo $tr("[Installer] The first argument to \%installer->\$copyfiles must be a source directory")
@@ -135,7 +154,7 @@ class(installer,object)
 			%d = ""
 			foreach(%file,$this->%lFiles)
 			{
-//				%file =~ s/"^$file.localdir()/(.*)$"/"\$file.localdir(\\1)"/
+				// %file =~ s/"^$file.localdir()/(.*)$"/"\$file.localdir(\\1)"/
 				%file = $str.replace(%file,"\\","/")
 				%c .= "file.remove -q \"%file\"$lf";
 				if(%d != $file.extractpath(%file))
@@ -149,7 +168,8 @@ class(installer,object)
 
 		if($isset($this->%lSources))
 		{
-			foreach(%file,$this->%lSources){
+			foreach(%file,$this->%lSources)
+			{
 				foreach(%line,$file.readlines(%file))
 				if(!$str.isempty(%line))
 				{
@@ -183,6 +203,3 @@ class(installer,object)
 		eval %c
 	}
 }
-
-
-

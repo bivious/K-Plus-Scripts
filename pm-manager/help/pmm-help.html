@@ -1,0 +1,392 @@
+<!--############################################################################
+#
+#   This file is part of the PM Manager Addon
+#   Copyright (C) 2017 slaboff (slaboff at no mail dot not)
+#
+#   This program is FREE software. You can redistribute it and/or
+#   modify it under the terms of the GNU General Public License
+#   as published by the Free Software Foundation; either version 2
+#   of the License, or (at your option) any later version.
+#
+#   This program is distributed in the HOPE that it will be USEFUL,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#   See the GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program. If not, write to the Free Software Foundation,
+#   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#############################################################################-->
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title><b>PM Manager Addon © 2017 by slaboff</b></title>
+	<style type="text/css">
+		body {
+			font-size: 12pt;
+			margin-left: 8px;
+			margin-right: 8px;
+			margin-top: 6px;
+			margin-bottom: 6px;
+			line-height: 24px;
+			font-family: sans-serif;
+		}
+		table,
+		td,
+		tr {
+			color: #3c3c3c;
+			font-size: 12pt;
+		}
+		td {
+			/* top | right | bottom | left */
+			padding: 6px 10px 10px 15px;
+		}
+		a:link {
+			text-decoration: none;
+			color: #2883e2;
+		}
+		a:visited {
+			text-decoration: none;
+			color: #6856cc;
+		}
+		a:hover {
+			text-decoration: underline;
+			color: #186CC4;
+		}
+		a:active {
+			text-decoration: underline;
+			color: #186CC4;
+		}
+		.title-table-cell {
+			/* Note QtextBrowser doesnt support this border-radius */
+			/* border-top-left-radius: 3px;
+			border-top-right-radius: 3px; */
+			background-color: #F2DFB1;
+		}
+		.title-text {
+			font-size: 18pt;
+			font-weight: bold;
+			padding-bottom: 3px;
+			padding-left: 0px;
+			color: #404040;
+			text-shadow: 0px 2px 0px rgba(247, 247, 247, 1);
+		}
+		.title-secondary-text {
+			font-size: 11pt;
+			padding-top: 3px;
+			color: #474747;
+			text-shadow: 0px 2px 0px rgba(247, 247, 247, 1);
+		}
+		.subtitle-table-cell {
+			background-color: #D6D6D6;
+			/* top | right | bottom | left */
+			padding: 2px 0px 6px 8px
+		}
+		.subtitle-text {
+			font-size: 12pt;
+			color: #000000;
+			text-shadow: 0px 1px 0px rgba(247, 247, 247, 1);
+		}
+		.subsubtitle-table-cell {
+			background-color: #E3E3E3;
+		}
+		.subsubtitle-text {
+			font-size: 11pt;
+			color: #474747;
+		}
+		.note-box {
+			background-color: #F2DFB1;
+			color: #636363;
+			font-size: 11pt;
+		}
+		.switch-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		.switch-title-table-cell {
+			font-family: "Lucida Console", Monaco, "Courier New", monospace;
+			font-size: 10pt;
+			color: #670000;
+			background-color: #EDEDED;
+		}
+		.switch-body-table-cell {
+		}
+		.footer {
+			border-top: 1px solid #a2a2a2;
+			color: #a2a2a2;
+			margin-top: 8px;
+			padding-top: 4px;
+			font-style: italic;
+			font-size: 10pt;
+		}
+		.img {
+			border: 1px solid #ddd;
+			/* Note QtextBrowser doesnt support this border-radius */
+			/* border-radius: 2px; */
+			/* top | right | bottom | left */
+			padding: 10px 0px 10px 15px
+		}
+	</style>
+</head>
+
+</html>
+
+<body bgcolor="#FFFFFF" text="#000000">
+	<table width="100%" cellpadding="1" cellspacing="0" border="0">
+		<tr>
+			<td align="left" bgcolor="#FFFFFF"><a href="index.html">
+				<img src="images/helplogoleft.png" iorder="0"></a>
+			</td>
+			<td align="right" bgcolor="#FFFFFF">
+				<img src="images/helplogoright.png">
+			</td>
+		</tr>
+	</table>
+	<table width="100%" cellpadding="3" cellspacing="0" border="0">
+		<tr>
+			<td class='title-table-cell'>
+				<div class='title-text'>PM Manager Addon - 1.0.0 &#169; 2017</div>
+				<div class='title-secondary-text'>Manage and Block Users and Uninvited PM's</div>
+			</td>
+		</tr>
+		<tr>
+			<td class='subtitle-table-cell'>
+				<div class='subtitle-text'>Description</div>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				This addon is designed to globally block users from sending you private messages and easily manage via a simple whitelist implementation, which users you wish to allow to message you, while notifying both you and non-whitelisted users when such blocks
+				occur.
+			</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				You have at your disposal an easy to use context menu system and a couple of dialogs that allow you to add, remove any user from your choice of a temporary or a permanent whitelist.<br>
+				There is also a dedicated option setup dialog, that allows you to configure a personalized message, which the non-whitelisted users will see, and to enable or disable notifications of blocked messages that are meant to keep you informed.
+			</td>
+		</tr>
+		<tr>
+			<td class='subtitle-table-cell'>
+				<div class='subtitle-text'>Features</div>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<ul>
+					<li>In channel context menu entries that control the <b>PM Manager</b> and the enables and disables the <b>PM blocker</b> function.</li>
+					<li>On user context menu entries that allow adding or removing the selected user from a temporary or permanent whitelist.</li>
+					<li>A main UI dialog displaying a temporary and permanent user management and current refreshable <b>Channel Users</b> list<br> The main dialog also has control buttons and Options setup access button.</li>
+					<li>The options UI also has a checkbox for user to turn on or off notification of blocked messages</li>
+					<li>Comprehensive tooltips in all controls that show hints of what controls do.</li>
+					<li>Comprehensive in active window messages to help as visual confirmations.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td class='subtitle-table-cell'>
+				<div class='subtitle-text'>Usage</div>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				Once you have the <b>PM Manager Addon</b> installed successfully.
+			</td>
+		</tr>
+		<tr>
+			<td class='subsubtitle-table-cell'>
+				<div class='subsubtitle-text'>Via Context Menus</div>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<ul>
+					<li>Right-click in any channel window of your choice to access the <b>PM Manager</b>.</li>
+					<li>Right-click in any channel window of your choice to start or stop the <b>PM Blocker</b>.</li>
+					<li><b>To add a user:</b> Select any user and via context menu and <b>Add <i>$user</i> to Whitelist</b> or <b>Add <i>$user</i> As Temporary User</b></li>
+					<li><b>To remove a user:</b> Select the target user and via context menu select <b>Remove <i>$user</i> from Whitelist</b> or <b>Remove <i>$user</i> As Temporary User</li>
+					<li>Right-click in any channel window of your choice to access the <b>PM Manager's Help</b>. Yes, this file.</li>
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td class='subsubtitle-table-cell'>
+				<div class='subsubtitle-text'>Via <b>PM Manager</b> Dialog</div>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				Once you have opened the main <b>PM Manager</b> window.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td class='img'><img src="images/pmmanager.png"></td>
+		</tr>
+	</table>
+	<table width="100%" cellpadding="3" cellspacing="0" border="0">
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Type a temporary nick here...</b>
+			</td>
+			<td>
+				Enter any nickname of a user you wish to add to the temporary whitelist.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Channel Users</b>
+			</td>
+			<td>
+				Highlight any user under this list, then click the right pointing arrow button <b>to add the user to the whitelist</b>.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Whitelisted Users</b>
+			</td>
+			<td>
+				Highlight any user under this list, then click the left pointing arrow button <b>to remove the user from this whitelist</b>.</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Blocker ON/OFF</b>
+			</td>
+			<td>
+				Click button to turn the <b>PM blocker</b> function ON ( block those pesky PM's ) or OFF ( Allow all PM's )
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Refresh</b>
+			</td>
+			<td>
+				With the PM Manager open, you can move to any channel on any server.<br>
+				Click the <b>Refresh</b> button and the <b>Channel Users</b> list will be re-populated with those channel's users.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Options</b>
+			</td>
+			<td>
+				Click this button open the <b>Options Setup Dialog<b>.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Exit</b>
+			</td>
+			<td>
+				Click this button to close the main <b>PM Manager</b> dialog.
+			</td>
+		</tr>
+	</table>
+	<table width="100%" cellpadding="3" cellspacing="0" border="0">
+		<tr>
+			<td class='note-box'>
+				<b>Notes: </b>The whitelist is <b>auto-saved</b> as users are added to or removed from this list.<br>
+				The temporary user whitelist, can only hold one user at any one time.<br>
+				The Channel Users and Whitelisted Users lists, only one user can be added/removed per any one selection/click.
+			</td>
+		</tr>
+		<tr>
+			<td class='subsubtitle-table-cell'>
+				<div class='subsubtitle-text'>Via <b>Options Setup</b> Dialog</div>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				Once you have opened the <b>Options Setup</b> window.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td class='img'><img src="images/pmsetup.png"></td>
+		</tr>
+	</table>
+	<table width="100%" cellpadding="3" cellspacing="0" border="0">
+		<tr bgcolor="#EAEAEA">
+			<td><b>Custom notification setup:</b> </td>
+			<td>You can personalize the notice message that is sent out on blocked messages.</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Notification of blocked queries is ON:</b>
+			</td>
+			<td>
+				(Default Checked) Opens a notification window when a message is blocked.<br>
+				If you prefer not seeing any notifications about your blocked messages, just <b>uncheck</b> this box.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Add</b>
+			</td>
+			<td>
+				Click this button to add the message that you typed under <b>Custom notification setup:</b>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Edit</b>
+			</td>
+			<td>
+				Click this button to edit the message that you previously added/saved under <b>Custom notification setup:</b>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Reset</b>
+			</td>
+			<td>
+				Click this button to reset the currently saved message to default. (Automated Message: <u>Uninvited PM's</u> are not being accepted.)
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td><b>Save</b></td>
+			<td>Click this button to save your message or changes that you typed/edited under <b>Custom notification setup:</b></td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Cancel</b>
+			</td>
+			<td>
+				Click this button to cancel any unsaved changes and returns you to the main <b>PM Manager</b> dialog.
+			</td>
+		</tr>
+	</table>
+	<table width="100%" cellpadding="3" cellspacing="0" border="0">
+		<tr>
+			<td class='subtitle-table-cell'>
+				<div class='subtitle-text'>Credits</div>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				I would like to thank the-j0k3r for the alpha phase testing and helping to identify bugs and suggesting/helped implement them.<br>
+				Also the general monkeywork with HTML/CSS/GitHub in the spirit of opensource.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				Message from the-j0k3r: I hope everyone enjoys the addon as much as I do. We now have the means to combat spammers in a whole different level.<br>
+				I would like to thank slaboff and praise him for the continued dedication to KVIrc scripting, inspite that maybe, during this process, he<br>
+				very likely pulled a few hairs out as a result. Sorry ;)
+				Thank you also for sharing your fun and extremely useful scripts with the community. Its terrific stuff, keep it up! ;)
+			</td>
+		</tr>
+		<tr>
+			<td class='subtitle-table-cell'>
+				<div class='subtitle-text'>License</div>
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				The <b>PM Manager Addon</b> is licensed under <b>GPLv2</b>, to view it <a href="gplv2.html">click here</a>
+			</td>
+		</tr>
+	</table>
+	<div class='footer'>PM Manager Addon v1.0.0 Documentation &#169; 2017 by slaboff</div>
+</body>
+
+</html>

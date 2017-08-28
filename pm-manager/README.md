@@ -12,10 +12,8 @@ own personalized notification message to send to users instead.
 
 ### Todo
 
-Still need to do up info/help files.
-
-Notes
-We recommend you add any command bots you use to the whitelist.
+* Package as a native KVIrc addon for single file destribution.
+* Bump version to beta at some stage? 
 
 ### Install
 
@@ -37,7 +35,11 @@ Use the `Manage Addons` under Settings menu entry in KVIrc to remove the PM Mana
 
 ### Screenshots
 
-soon
+##### PM Manager -  Main Dialog
+![pm-manager-main-dialog](./pmm-help/images/pmmanager.png "PM Manager - Main Dialog")
+
+##### PM Manager - Options Setup Dialog
+![pm-manager-options-setup-dialog](./pmm-help/images/pmsetup.png "PM Manager - Options Setup Dialog")
 
 ### Usage
 
@@ -49,4 +51,4 @@ The username/query context menu entry allows whitelist temporary/permanent users
 
 ### License
 
-soon
+[![PM Manager GPLv2+](https://img.shields.io/badge/%20%20PM_Manager%20%20-%20GPLv2+%20-blue.svg)](LICENCE)

@@ -1,3 +1,24 @@
+################################################################################
+#
+#   This file is part of the PM Manager Addon
+#   Copyright (C) 2017 slaboff (slaboff at no mail dot not)
+#
+#   This program is FREE software. You can redistribute it and/or
+#   modify it under the terms of the GNU General Public License
+#   as published by the Free Software Foundation; either version 2
+#   of the License, or (at your option) any later version.
+#
+#   This program is distributed in the HOPE that it will be USEFUL,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#   See the GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program. If not, write to the Free Software Foundation,
+#   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+################################################################################
+
 class("qupm::setup","widget")
 {
 	function saveSetUp()
@@ -116,8 +137,8 @@ class("qupm::setup","widget")
 		@%layout->$addMultiCellWidget(@%ckxPMLog, 4,10,0,4)
 
 		@%layout->$addMultiCellWidget(@%btnPMAdd, 9,12,0,0)
-		@%layout->$addMultiCellWidget(@%btnPMRst, 9,12,1,1)
-		@%layout->$addMultiCellWidget(@%btnPMEdt, 9,12,2,2)
+		@%layout->$addMultiCellWidget(@%btnPMEdt, 9,12,1,1)
+		@%layout->$addMultiCellWidget(@%btnPMRst, 9,12,2,2)
 		@%layout->$addMultiCellWidget(@%btnSSave, 9,12,3,3)
 		@%layout->$addMultiCellWidget(@%btnCncel, 9,12,4,4)
 
@@ -613,4 +634,3 @@ class("qupm::main","widget")
 		%G_bDupeUser = $false
 	}
 }
-
