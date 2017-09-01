@@ -48,6 +48,8 @@ addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Unin
 	unset %G_pmReplyMsg
 	unset %G_pmPMLog
 	unset %G_bDupeUser
+	unset %G_pmWhiteList
+
 	echo -w=$active -i=$msgtype(GenericStatus) "Notice: PM Manager Addon v1.0.0 has been successfully removed."
 	qupm::uninstallfiles
 }
