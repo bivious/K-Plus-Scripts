@@ -45,6 +45,9 @@ defpopup(QUPM.users)
 			}
 		}
 
+		if(%G_pmTmpUser != $null)
+			%:isInTemplist = %G_pmTmpUser
+
 		%:ownNickLabelText = "<p>Own Nick: <b>$0</b> - Nothing to do!</p>"
 	}
 
@@ -95,16 +98,75 @@ defpopup(QUPM.users)
 		%:UserValid = $false
 	}
 
-	item(Add $0 as Temporary User, $icon(join)) (!%G_pmTmpUser && !%:UserValid && !%:MyNick)
+	item(Add $0 As Temporary User, $icon(join)) (!%G_pmTmpUser && !%:UserValid && !%:MyNick)
 	{
 		%G_pmTmpUser = $0
 		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has been successfully added to your temporary whitelist."
 	}
 
-	item(Remove $0 as Temporary User, $icon(part)) (%G_pmTmpUser == $0 && !%:UserValid && !%:MyNick)
+	item(Remove $0 As Temporary User, $icon(part)) (%G_pmTmpUser == $0 && !%:UserValid && !%:MyNick)
 	{
 		%G_pmTmpUser = $false
 		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b$0$b has been successfully removed from your temporary whitelist."
+	}
+
+	item(Add $0 to Whitelist, $icon(plus)) (%:isValidWindow && !%:UserValid && %G_pmTmpUser != $0 && !%:MyNick)
+	{
+		%G_pmWhiteList[] <+ $0
+		%mywhitelist = $file.localdir("mywhitelist.txt")
+		%outFile = %mywhitelist
+		%conf = $config.open(%outFile, w)
+		config.clearsection %conf whitelist
+		config.setsection %conf whitelist
+
+		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
+		{
+			config.write %conf %i %G_pmWhiteList[%i];
+		}
+
+		%:isValidWindow = $false
+		if((($window.type == "query") && ($window.type == "channel") && (%:UserValid == $true)))
+			%:isValidWindow = $true
+
+		config.close %conf
+		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The nick $b$0$b has been successfully added to your whitelist."
+		%:UserValid = $true
+	}
+
+	item(Remove %:isInTemplist As Temporary User, $icon(part)) (%:isInTemplist && %G_pmTmpUser != $0 && !%:UserValid && !%:MyNick)
+	{
+		%G_pmTmpUser = $false
+		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b%:isInTemplist$b has been successfully removed from your temporary whitelist."
+		#%G_pmTmpUser = $0
+		#echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has been successfully updated as your temporary user."
+	}
+
+	item(Replace User: %:isInTemplist with User: $0 As Temporary User, $icon(update)) (%:isInTemplist && %G_pmTmpUser != $0 && !%:UserValid && !%:MyNick)
+	{
+		%G_pmTmpUser = $false
+		#echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b%:isInTemplist$b has been successfully removed from your temporary whitelist."
+		%G_pmTmpUser = $0
+		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has been successfully updated as your temporary user."
+	}
+
+	item(Remove $0 As Temporary User and Add to Whitelist, $icon(refresh)) (%:isInTemplist && !%:UserValid && %G_pmTmpUser == $0 && !%:MyNick)
+	{
+		%G_pmTmpUser = $false
+		%G_pmWhiteList[] <+ $0
+		%mywhitelist = $file.localdir("mywhitelist.txt")
+		%outFile = %mywhitelist
+		%conf = $config.open(%outFile, w)
+		config.clearsection %conf whitelist
+		config.setsection %conf whitelist
+
+		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
+		{
+			config.write %conf %i %G_pmWhiteList[%i];
+		}
+
+		config.close %conf
+		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b$0$b has been successfully removed as temporary user and added to your whitelist."
+		%:UserValid = $true
 	}
 
 	label(%:ownNickLabelText) (%:MyNick)
