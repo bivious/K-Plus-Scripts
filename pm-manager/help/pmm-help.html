@@ -18,6 +18,7 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 #############################################################################-->
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -121,13 +122,6 @@
 			font-style: italic;
 			font-size: 10pt;
 		}
-		.img {
-			border: 1px solid #ddd;
-			/* Note QtextBrowser doesnt support this border-radius */
-			/* border-radius: 2px; */
-			/* top | right | bottom | left */
-			padding: 10px 0px 10px 15px
-		}
 	</style>
 </head>
 
@@ -136,8 +130,8 @@
 <body bgcolor="#FFFFFF" text="#000000">
 	<table width="100%" cellpadding="1" cellspacing="0" border="0">
 		<tr>
-			<td align="left" bgcolor="#FFFFFF"><a href="index.html">
-				<img src="images/helplogoleft.png" iorder="0"></a>
+			<td align="left" bgcolor="#FFFFFF">
+				<img src="images/helplogoleft.png">
 			</td>
 			<td align="right" bgcolor="#FFFFFF">
 				<img src="images/helplogoright.png">
@@ -221,7 +215,9 @@
 			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
-			<td class='img'><img src="images/pmmanager.png"></td>
+			<td align="left">
+				<img align="top" src="images/pmmanager.png">
+			</td>
 		</tr>
 	</table>
 	<table width="100%" cellpadding="3" cellspacing="0" border="0">
@@ -246,7 +242,8 @@
 				<b>Whitelisted Users</b>
 			</td>
 			<td>
-				Highlight any user under this list, then click the left pointing arrow button <b>to remove the user from this whitelist</b>.</td>
+				Highlight any user under this list, then click the left pointing arrow button <b>to remove the user from this whitelist</b>.
+			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
 			<td>
@@ -301,13 +298,19 @@
 			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
-			<td class='img'><img src="images/pmsetup.png"></td>
+			<td align="left">
+				<img align="top" src="images/pmsetup.png">
+			</td>
 		</tr>
 	</table>
 	<table width="100%" cellpadding="3" cellspacing="0" border="0">
 		<tr bgcolor="#EAEAEA">
-			<td><b>Custom notification setup:</b> </td>
-			<td>You can personalize the notice message that is sent out on blocked messages.</td>
+			<td>
+				<b>Custom notification setup:</b>
+			</td>
+			<td>
+				You can personalize the notice message that is sent out on blocked messages.
+			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
 			<td>
@@ -343,8 +346,12 @@
 			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
-			<td><b>Save</b></td>
-			<td>Click this button to save your message or changes that you typed/edited under <b>Custom notification setup:</b></td>
+			<td>
+				<b>Save</b>
+			</td>
+			<td>
+				Click this button to save your message or changes that you typed/edited under <b>Custom notification setup:</b>
+			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
 			<td>
