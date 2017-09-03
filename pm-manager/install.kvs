@@ -27,15 +27,12 @@ addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Unin
 	# This is our uninstall callback:
 	# it will be called by KVIrc when addon.uninstall is invoked
 	# This is an automatically generated alias that will erase the installed files
-
 	file.remove -q $file.localdir/config/scripts/QUPMM.kvc
 	file.remove -q $file.localdir/mywhitelist.txt
 
 	%temp = $window("Blocked PM")
 	if($window.exists(%temp))
-	{
 		window.close -q %temp;
-	}
 
 	popup.delitem -d -q channeltextview QUPM.controls
 	popup.delitem -d -q channeltextview QUPM.separator0
@@ -63,7 +60,7 @@ parse %mypath/utils/installer.kvs
 
 # The installer will copy our files and
 # automatically generate an uninstallation alias for them
-%installer = $new(installer,0,myinstaller)
+%installer = $new(installer, 0, myinstaller)
 
 # Copy files in each subdirectory
 # Parse source files
@@ -72,25 +69,22 @@ parse %mypath/utils/installer.kvs
 # Copy icons to pics directory
 # Making sure directory exists
 if(!$file.exists($file.localdir("pics")))
-{
 	file.mkdir $file.localdir("pics")
-}
+
 %installer->$copyFiles("%mypath/pics/","*.png","$file.localdir("pics")")
 
 # Copy html help files
 # Check if directory exists
 if(!$file.exists($file.localdir("help")))
-{
 	file.mkdir $file.localdir("help")
-}
+
 %installer->$copyFiles("%mypath/help/","*.html","$file.localdir("help")")
 
 # Copy image files for html
 # Create directory images to store
 if(!$file.exists($file.localdir("help/images")))
-{
 	file.mkdir $file.localdir("help/images")
-}
+
 %installer->$copyFiles("%mypath/help/images","*.png","$file.localdir("help/images")")
 
 # Then generate the uninstall alias
@@ -99,4 +93,5 @@ if(!$file.exists($file.localdir("help/images")))
 
 # Finally kill the installer helper
 delete %installer
+
 # Done: The addon is installed and running: enjoy :)

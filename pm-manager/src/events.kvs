@@ -42,28 +42,20 @@ event(OnKVIrcStartup,blockPM)
 event(OnQueryMessage,blockPM)
 {
 	if((%G_pmTmpUser != $null) && (%G_pmTmpUser == $0))
-	{
 		return;
-	}
 
 	if($my.nick == $0)
-	{
 		return;
-	}
 
 	foreach(%user, %G_pmWhiteList)
 	{
 		if($0 == %user)
-		{
 			return;
-		}
 	}
 
 	%noticemsg = ""$b"Automated Message:"$b" "$u"Uninvited PM's"$u" are not being accepted!"
 	if(%G_pmReplyMsg != $false)
-	{
 		%noticemsg = %G_pmReplyMsg
-	}
 
 	%BlockedNick = $0
 	%closeit = $new(qupm::pmcloser)
@@ -72,10 +64,9 @@ event(OnQueryMessage,blockPM)
 
 	if(%G_pmPMLog == $true)
 	{
-		if (!$window.exists($window(%winid)))
-		{
+		if(!$window.exists($window(%winid)))
 			$window.open("m", %winid, $context,203)
-		}
+
 		echo -w=$window(%winid) -i=$msgtype(ignore) "$b"$date(F) "BLOCKED PM:"$b $k(0) [ User: $0 ] * Message: $3
 	}
 

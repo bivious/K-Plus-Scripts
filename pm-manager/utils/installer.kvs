@@ -52,7 +52,7 @@
 				}
 			}
 		Then, you add this line to you uninstall callback script:
-			delpopupitem channeltextview myaddon::myitem
+		delpopupitem channeltextview myaddon::myitem
 */
 
 class(installer,object)
@@ -65,6 +65,7 @@ class(installer,object)
 	{
 		if(!$file.exists($0))
 			return
+
 		if($isempty($0))
 		{
 			echo $tr("[Installer] The first argument to \%installer->\$copyfiles must be a source directory")
@@ -103,6 +104,7 @@ class(installer,object)
 	{
 		if($isempty($0) || $file.exists($0))
 			return
+
 		foreach -a (%subdir,$str.split("/",$file.fixpath($0)))
 		{
 			%p <+ %subdir
