@@ -31,4 +31,4 @@ config.write %pmoptions PMMSG %G_pmReplyMsg
 config.write %pmoptions PMLOG %G_pmPMLog
 config.close %pmoptions
 eventctl -d OnQueryMessage blockPM
-echo -i=$msgtype(GenericSuccess) "PM Manager Addon v"%version" Initialization Complete."
+echo -i=$msgtype(GenericSuccess) "Notice: PM Manager Addon v"%version" Initialization Complete."

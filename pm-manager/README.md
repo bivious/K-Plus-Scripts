@@ -12,42 +12,54 @@ own personalized notification message to send to users instead.
 
 ### Todo
 
-* Package as a native KVIrc addon for single file destribution.
-* Bump version to beta at some stage? 
+* Add screenshots of context menu options to help file.
+* Bump version to beta at some stage?
 
 ### Install
 
-Once you have extracted the package.
+#### From Source
+
+Once you have the files extracted.
 * Via the scripting Menu Entry and select `Execute Script`
-* Via ```Ctrl+Shift+X``` navigate to location you extracted the addon
+* Or via ```Ctrl+Shift+X```
+* Navigate to location you extracted the addon
   then select the ```install.kvs`` file and click open.
 
-You should see the following lines:
+#### From Binary
+* Grab the PM_Manager_$version.zip and extract it.
+* Goto Settings menu or press ```Ctrl+Shft+N```
+* Scroll to Use the `Manage Addons`
+* Click the Open Box Icon (Install addon package from disk) and Browse for the ```PM_Manager_$version.kva```
 
+You should see the following lines (no matter the install method used):
 ```
 Attempting to register addon "PM Manager" with version 1.0.0
 Addon successfully registered
-PM Manager Addon Version - 1.0.0  Initialization Complete.
+Notice: PM Manager Addon Version - 1.0.0  Initialization Complete.
 ```
 
 ### Uninstall
-Use the `Manage Addons` under Settings menu entry in KVIrc to remove the PM Manager.
+
+* Goto Settings menu
+* Scroll to Use the `Manage Addons` or ```Ctrl+Shft+N```
+* Select the addon and click the Bin Icon (Delete selected addon) to remove the PM Manager.
+
+You should see the following message:
+```
+Notice: PM Manager Addon v1.0.0 has been successfully removed.
+```
 
 ### Screenshots
 
 ##### PM Manager -  Main Dialog
-![pm-manager-main-dialog](./pmm-help/images/pmmanager.png "PM Manager - Main Dialog")
+![pm-manager-main-dialog](./help/images/pmmanager.png "PM Manager - Main Dialog")
 
 ##### PM Manager - Options Setup Dialog
-![pm-manager-options-setup-dialog](./pmm-help/images/pmsetup.png "PM Manager - Options Setup Dialog")
+![pm-manager-options-setup-dialog](./help/images/pmsetup.png "PM Manager - Options Setup Dialog")
 
 ### Usage
 
-It has 2 popup menus, just right-click in channel or right-click on user-name or
-in query window to target user that you initiate.
-
-The in channel context menu entry is for PM Manager controls.
-The username/query context menu entry allows whitelist temporary/permanent users.
+See ![pm-manager-options-setup-dialog](./help/pmm-help.html)
 
 ### License
 
