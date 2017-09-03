@@ -23,17 +23,19 @@ defpopup(QUPM.users)
 {
 	prologue
 	{
-		if($objects.exists(%G_qupmManager))
+		if(!$objects.exists(%G_qupmManager))
+		{
+			%G_qupmManager = $new(qupm::main)
+			%G_qupmManager->$hide()
+		}
+		else
 		{
 			%G_qupmManager->$hide()
-			unset %G_qupmManager
 		}
 
 		%:MyNick = $false
 		if($my.nick == $0)
-		{
 			%:MyNick = $true;
-		}
 
 		%:UserValid = $false
 		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
@@ -54,20 +56,14 @@ defpopup(QUPM.users)
 	item(Add $0 to Whitelist, $icon(plus)) (!%:UserValid && %G_pmTmpUser != $0 && !%:MyNick)
 	{
 		%G_pmWhiteList[] <+ $0
-		%mywhitelist = $file.localdir("mywhitelist.txt")
-		%outFile = %mywhitelist
-		%conf = $config.open(%outFile, w)
-		config.clearsection %conf whitelist
-		config.setsection %conf whitelist
-
-		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
+		%update = %G_qupmManager->$updateList()
+		if(%update == $true)
 		{
-			config.write %conf %i %G_pmWhiteList[%i];
+			echo -w=$active -i=$msgtype(GenericStatus) "Notice: The nick $b$0$b has been successfully added to your whitelist."
+			%:UserValid = $true
+			unset %G_qupmManager
 		}
-
-		config.close %conf
-		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The nick $b$0$b has been successfully added to your whitelist."
-		%:UserValid = $true
+		unset %G_qupmManager
 	}
 
 	item(Remove $0 from Whitelist, $icon(minus)) (%:UserValid && !%:MyNick)
@@ -75,102 +71,87 @@ defpopup(QUPM.users)
 		foreach(%user, %G_pmWhiteList)
 		{
 			if(%user != $0)
-			{
 				%temp_wl[] <+ %user
-			}
 		}
 
 		unset %G_pmWhiteList
-		%mywhitelist = $file.localdir("mywhitelist.txt")
-		%outFile = %mywhitelist
-		%conf = $config.open(%outFile, w)
-		config.clearsection %conf whitelist
-		config.setsection %conf whitelist
-
 		for(%i = 0; %i < %temp_wl[]#; %i++)
 		{
-			config.write %conf %i %temp_wl[%i];
 			%G_pmWhiteList[] <+ %temp_wl[%i]
 		}
 
-		config.close %conf
-		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b$0$b has been successfully removed from your whitelist."
-		%:UserValid = $false
+		%update = %G_qupmManager->$updateList()
+		if(%update == $true)
+		{
+			echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b$0$b has been successfully removed from your whitelist."
+			%:UserValid = $false
+			unset %G_qupmManager
+		}
+		unset %G_qupmManager
 	}
 
 	item(Add $0 As Temporary User, $icon(join)) (!%G_pmTmpUser && !%:UserValid && !%:MyNick)
 	{
 		%G_pmTmpUser = $0
 		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has been successfully added to your temporary whitelist."
+		unset %G_qupmManager
 	}
 
 	item(Remove $0 As Temporary User, $icon(part)) (%G_pmTmpUser == $0 && !%:UserValid && !%:MyNick)
 	{
 		%G_pmTmpUser = $false
 		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b$0$b has been successfully removed from your temporary whitelist."
+		unset %G_qupmManager
 	}
 
 	item(Add $0 to Whitelist, $icon(plus)) (%:isValidWindow && !%:UserValid && %G_pmTmpUser != $0 && !%:MyNick)
 	{
 		%G_pmWhiteList[] <+ $0
-		%mywhitelist = $file.localdir("mywhitelist.txt")
-		%outFile = %mywhitelist
-		%conf = $config.open(%outFile, w)
-		config.clearsection %conf whitelist
-		config.setsection %conf whitelist
-
-		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
-		{
-			config.write %conf %i %G_pmWhiteList[%i];
-		}
 
 		%:isValidWindow = $false
 		if((($window.type == "query") && ($window.type == "channel") && (%:UserValid == $true)))
 			%:isValidWindow = $true
 
-		config.close %conf
-		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The nick $b$0$b has been successfully added to your whitelist."
-		%:UserValid = $true
+		%update = %G_qupmManager->$updateList()
+		if(%update == $true)
+		{
+			echo -w=$active -i=$msgtype(GenericStatus) "Notice: The nick $b$0$b has been successfully added to your whitelist."
+			%:UserValid = $true
+		}
+		unset %G_qupmManager
 	}
 
 	item(Remove %:isInTemplist As Temporary User, $icon(part)) (%:isInTemplist && %G_pmTmpUser != $0 && !%:UserValid && !%:MyNick)
 	{
 		%G_pmTmpUser = $false
 		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b%:isInTemplist$b has been successfully removed from your temporary whitelist."
-		#%G_pmTmpUser = $0
-		#echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has been successfully updated as your temporary user."
 	}
 
 	item(Replace User: %:isInTemplist with User: $0 As Temporary User, $icon(update)) (%:isInTemplist && %G_pmTmpUser != $0 && !%:UserValid && !%:MyNick)
 	{
 		%G_pmTmpUser = $false
-		#echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b%:isInTemplist$b has been successfully removed from your temporary whitelist."
 		%G_pmTmpUser = $0
-		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has been successfully updated as your temporary user."
+		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b$0$b has successfully replaced $b%:isInTemplist$b as a temporary whitelisted user."
+		unset %G_qupmManager
 	}
 
 	item(Remove $0 As Temporary User and Add to Whitelist, $icon(refresh)) (%:isInTemplist && !%:UserValid && %G_pmTmpUser == $0 && !%:MyNick)
 	{
 		%G_pmTmpUser = $false
 		%G_pmWhiteList[] <+ $0
-		%mywhitelist = $file.localdir("mywhitelist.txt")
-		%outFile = %mywhitelist
-		%conf = $config.open(%outFile, w)
-		config.clearsection %conf whitelist
-		config.setsection %conf whitelist
+		%update = %G_qupmManager->$updateList()
 
-		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
+		if(%update == $true)
 		{
-			config.write %conf %i %G_pmWhiteList[%i];
+			echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b$0$b has been successfully removed as a temporary user and added to your whitelist."
+			%:UserValid = $true
 		}
-
-		config.close %conf
-		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b$0$b has been successfully removed as temporary user and added to your whitelist."
-		%:UserValid = $true
+		unset %G_qupmManager
 	}
 
 	label(%:ownNickLabelText) (%:MyNick)
 }
+
 popup.delitem -q channel QUPM.separator0
 popup.delitem -q querytextview QUPM.separator0
 popup.addSeparator channel QUPM.separator0
@@ -180,10 +161,9 @@ popup.delitem -q querytextview QUPM.users
 
 if($system.ostype != "UNIX")
 {
-	%ticon = $file.localdir(\pics\\pmmanager_small.png)
-	%ficon = $str.replace(%ticon, $char(92), $char(92)$char(92), 1)
-	popup.addExtPopup channel QUPM.users "PM Manager" %ficon QUPM.users
-	popup.addExtPopup querytextview QUPM.users "PM Manager" %ficon QUPM.users
+	# For Windows we need to escape the path else the KVS interpreter will strip the single slash when context menu is called.
+	popup.addExtPopup channel QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
+	popup.addExtPopup querytextview QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
 }
 else
 {
@@ -237,9 +217,8 @@ popup.delitem -q channeltextview QUPM.controls
 
 if($system.ostype != "UNIX")
 {
-	%ticon = $file.localdir(\pics\\pmmanager_small.png)
-	%ficon = $str.replace(%ticon, $char(92), $char(92)$char(92), 1)
-	popup.addExtPopup channeltextview QUPM.controls "PM Manager" %ficon QUPM.controls
+	# For Windows we need to escape the path else the KVS interpreter will strip the single slash when context menu is called.
+	popup.addExtPopup channeltextview QUPM.controls "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.controls
 }
 else
 {
