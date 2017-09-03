@@ -205,7 +205,6 @@ class("qupm::setup","widget")
 
 		privateimpl(@%btnPMRst, clickEvent)
 		{
-
 			@$parent->$parent->%lnePMMsg->$setText("Click here to add your own personalized message...")
 			%reset = $b"Reset to default."$b
 			echo -w=$active -i=$msgtype(GenericWarning) "Personalized Message: [ %reset ] Don't forget to save after reset."
@@ -244,10 +243,9 @@ class("qupm::setup","widget")
 			delete $$
 		}
 	}
-
 }
 
-class("qupm::pmcloser","object")
+class("qupm::pmcloser", "object")
 {
 	function closePMWin($0 = nick)
 	{
@@ -260,8 +258,25 @@ class("qupm::pmcloser","object")
 
 }
 
-class("qupm::main","widget")
+class("qupm::main", "widget")
 {
+	function updateList()
+	{
+		%mywhitelist = $file.localdir("mywhitelist.txt")
+		%outFile = %mywhitelist
+		%conf = $config.open(%outFile, w)
+		config.clearsection %conf whitelist
+		config.setsection %conf whitelist
+
+		for(%i = 0; %i < %G_pmWhiteList[]#; %i++)
+		{
+			config.write %conf %i %G_pmWhiteList[%i];
+		}
+
+		config.close %conf
+		return $true
+	}
+
 	function saveList($0 = flag)
 	{
 		%mywhitelist = $file.localdir("mywhitelist.txt")
@@ -280,9 +295,7 @@ class("qupm::main","widget")
 
 		config.close %conf
 		if($0 != 1)
-		{
 			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The whitelist has been saved successfully."
-		}
 	}
 
 	function loadList()
@@ -301,6 +314,7 @@ class("qupm::main","widget")
 		config.close %conf
 		unset %G_pmWhiteList
 		%t = %trusteduser[]#
+
 		for(%i = 0; %i < %t; %i++)
 		{
 			@%lbTrustedUsers->$insertItem(%trusteduser[%i])
@@ -343,9 +357,7 @@ class("qupm::main","widget")
 		@%leTmpUserAdd->$setText("Type a temporary nick here...")
 
 		if(%G_pmTmpUser != $null)
-		{
 			@%leTmpUserAdd->$setText(%G_pmTmpUser);
-		}
 
 		@%btnTmpUserAdd = $new(button, $$)
 		@%btnTmpUserAdd->$setText("A&dd User")
@@ -394,7 +406,7 @@ class("qupm::main","widget")
 		@%btnPMStatus->$setText("&Blocker ON")
 		@%btnPMStatus->$setTooltip("<p><pre>Click to enable the PM blocker.</pre></p>")
 
-		if($isEventEnabled(OnQueryMessage,blockPM))
+		if($isEventEnabled(OnQueryMessage, blockPM))
 		{
 			@%btnPMStatus->$setText("&Blocker OFF")
 			@%btnPMStatus->$setTooltip("<p><pre>Click to disable the PM blocker.</pre></p>")
@@ -575,7 +587,7 @@ class("qupm::main","widget")
 
 		privateimpl(@%btnPMStatus, clickEvent)
 		{
-			if(!$isEventEnabled(OnQueryMessage,blockPM))
+			if(!$isEventEnabled(OnQueryMessage, blockPM))
 			{
 				eventctl -e OnQueryMessage blockPM
 				@$parent->$parent->%btnPMStatus->$setText("&Blocker OFF")
@@ -585,7 +597,7 @@ class("qupm::main","widget")
 				halt;
 			}
 
-			if($isEventEnabled(OnQueryMessage,blockPM))
+			if($isEventEnabled(OnQueryMessage, blockPM))
 			{
 				eventctl -d OnQueryMessage blockPM
 				@$parent->$parent->%btnPMStatus->$setText("&Blocker ON")
@@ -633,4 +645,5 @@ class("qupm::main","widget")
 		$$->$saveList(1)
 		%G_bDupeUser = $false
 	}
+
 }
