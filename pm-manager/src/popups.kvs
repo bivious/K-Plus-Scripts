@@ -158,18 +158,9 @@ popup.addSeparator channel QUPM.separator0
 popup.addSeparator querytextview QUPM.separator0
 popup.delitem -q channel QUPM.users
 popup.delitem -q querytextview QUPM.users
-
-if($system.ostype != "UNIX")
-{
-	# For Windows we need to escape the path else the KVS interpreter will strip the single slash when context menu is called.
-	popup.addExtPopup channel QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
-	popup.addExtPopup querytextview QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
-}
-else
-{
-	popup.addExtPopup channel QUPM.users "PM Manager" $file.localdir(pics/pmmanager_small.png) QUPM.users
-	popup.addExtPopup querytextview QUPM.users "PM Manager" $file.localdir(pics/pmmanager_small.png) QUPM.users
-}
+# We $escape the path else the KVS interpreter will strip the single slash when context menu is called in Windows
+popup.addExtPopup channel QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
+popup.addExtPopup querytextview QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
 
 defpopup(QUPM.controls)
 {
@@ -215,12 +206,5 @@ popup.delitem -q channeltextview QUPM.separator0
 popup.addSeparator channeltextview QUPM.separator0
 popup.delitem -q channeltextview QUPM.controls
 
-if($system.ostype != "UNIX")
-{
-	# For Windows we need to escape the path else the KVS interpreter will strip the single slash when context menu is called.
-	popup.addExtPopup channeltextview QUPM.controls "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.controls
-}
-else
-{
-	popup.addExtPopup channeltextview QUPM.controls "PM Manager" $file.localdir(pics/pmmanager_small.png) QUPM.controls
-}
+# We $escape the path else the KVS interpreter will strip the single slash when context menu is called in Windows
+popup.addExtPopup channeltextview QUPM.controls "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.controls
