@@ -59,7 +59,7 @@ Notice: PM Manager Addon v1.0.0 has been successfully removed.
 
 ### Usage
 
-See ![pm-manager-options-setup-dialog](./help/pmm-help.html)
+See ![pm-manager-options-setup-dialog](https://cdn.rawgit.com/the-j0k3r/kvirc-scripts/pm-manager/pm-manager/help/pmm-help.html)
 
 ### License
 
