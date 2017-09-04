@@ -125,6 +125,7 @@ defpopup(QUPM.users)
 	{
 		%G_pmTmpUser = $false
 		echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b%:isInTemplist$b has been successfully removed from your temporary whitelist."
+		unset %G_qupmManager
 	}
 
 	item(Replace User: %:isInTemplist with User: $0 As Temporary User, $icon(update)) (%:isInTemplist && %G_pmTmpUser != $0 && !%:UserValid && !%:MyNick)
