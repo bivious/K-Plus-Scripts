@@ -1,33 +1,35 @@
 ### Introduction
 
-Welcome this is an alpha package for the PM Manager Addon.
+Welcome, to the PM Manager Addon.
 
-The PM Manager is a user manageable global private message blocker for KVIrc.
-The PM Manager has a simple UI to whitelist users temporarily or permanently, or
-via a simple context menu entry.
+The PM Manager is user manageable global private message blocker for KVIrc 4.9.2.
+It features simple but comprehensive dialogs and context menu entries designed to easily allow the whitelisting of users temporarily or permanently.
 
-The PM Manager notifies you and blocked users of any blocked PMs by default and
-allows you in addition to the pre-configured default message, to configure your
-own personalized notification message to send to users instead.
+The PM Manager features a in active window notification system, that also shows you and the blocked user of any filtered PM by default.
+It features a the pre-configured default message the blocked user sees and allows you to configure your
+own personalized notification message.
+
+The PM Manager allows you to easily keep a single working and refreshable backup and allows you to restore information in those backups making it available immediately for you to manage.
 
 ### Features
 
 * In channel context menu entries that control the PM Manager and the enables and disables the PM blocker function.
 * On user context menu entries that allow adding, removing, replacing or changing the target user from a temporary to/or permanent whitelist.
-* A main UI dialog displaying a temporary and permanent user management and current refreshable Channel Users list
-* The main dialog also has control buttons and Options setup access button.
-* The options UI also has a checkbox for user to turn on or off notification of blocked messages.
+* A dialog with list display control and access buttons.
+  * Refreshable Channel Users and Whitelisted Users lists.
+  * Enable/Disable notification of blocked messages.
+  * Comprehensive tooltips in all controls that show hints of what controls do.
 * A static Backup and Restore functionality for permanent whitelist and main PM Manager configuration saving.
-* Comprehensive tooltips in all controls that show hints of what controls do.
-* Comprehensive in active window messages to help as visual confirmations.
+* Comprehensive in active window feedback messaging, serving as visual confirmations.
 * Comprehensive support for keyboard access via Alt+"Key"
 * A comprehensive help file.
-
 
 ### Todo
 
 * Add screenshots of context menu options to help file.
 * Bump version to beta at some stage?
+* More testing
+* Make PR to upstream.
 
 ### Install
 
@@ -66,14 +68,16 @@ Notice: PM Manager Addon v1.0.0 has been successfully removed.
 ### Screenshots
 
 ##### PM Manager -  Main Dialog
+
 ![pm-manager-main-dialog](./help/images/pmmanager.png "PM Manager - Main Dialog")
 
 ##### PM Manager - Options Setup Dialog
+
 ![pm-manager-options-setup-dialog](./help/images/pmsetup.png "PM Manager - Options Setup Dialog")
 
 ### Usage
 
-See ![pm-manager-options-setup-dialog](https://cdn.rawgit.com/the-j0k3r/kvirc-scripts/pm-manager/pm-manager/help/pmm-help.html)
+See the PM Manager's ![help file here](http://htmlpreview.github.io/?https://github.com/the-j0k3r/kvirc-scripts/blob/pm-manager/pm-manager/help/pmm-help.html)
 
 ### License
 
