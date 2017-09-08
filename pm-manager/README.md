@@ -10,6 +10,20 @@ The PM Manager notifies you and blocked users of any blocked PMs by default and
 allows you in addition to the pre-configured default message, to configure your
 own personalized notification message to send to users instead.
 
+### Features
+
+* In channel context menu entries that control the PM Manager and the enables and disables the PM blocker function.
+* On user context menu entries that allow adding, removing, replacing or changing the target user from a temporary to/or permanent whitelist.
+* A main UI dialog displaying a temporary and permanent user management and current refreshable Channel Users list
+* The main dialog also has control buttons and Options setup access button.
+* The options UI also has a checkbox for user to turn on or off notification of blocked messages.
+* A static Backup and Restore functionality for permanent whitelist and main PM Manager configuration saving.
+* Comprehensive tooltips in all controls that show hints of what controls do.
+* Comprehensive in active window messages to help as visual confirmations.
+* Comprehensive support for keyboard access via Alt+"Key"
+* A comprehensive help file.
+
+
 ### Todo
 
 * Add screenshots of context menu options to help file.
