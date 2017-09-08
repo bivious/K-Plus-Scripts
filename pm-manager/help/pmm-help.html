@@ -173,8 +173,11 @@
 					<li>On user context menu entries that allow <b>adding</b>, <b>removing</b>, <b>replacing</b> or <b>changing</b> the target user from a temporary to/or permanent whitelist.</li>
 					<li>A main UI dialog displaying a temporary and permanent user management and current refreshable <b>Channel Users</b> list<br> The main dialog also has control buttons and Options setup access button.</li>
 					<li>The options UI also has a checkbox for user to turn on or off notification of blocked messages</li>
+					<li>A static Backup and Restore functionality for permanent whitelist and main PM Manager configuration saving.</li>
 					<li>Comprehensive tooltips in all controls that show hints of what controls do.</li>
 					<li>Comprehensive in active window messages to help as visual confirmations.</li>
+					<li>Comprehensive support for keyboard access via Alt+"Key"</li>
+					<li>A comprehensive help file.</li>
 				</ul>
 			</td>
 		</tr>
@@ -244,7 +247,7 @@
 				<b>Whitelisted Users</b>
 			</td>
 			<td>
-				Highlight any user under this list, then click the left pointing arrow button <b>to remove the user from the whitelist</b>.
+				Highlight any user under this list, then click the left pointing arrow button <b>to remove the user from this whitelist</b>.
 			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
@@ -344,7 +347,7 @@
 				<b>Reset</b>
 			</td>
 			<td>
-				Click this button to reset the currently saved message to default. (<b>Automated Message:</b> Uninvited PM's</u> are not being accepted.)
+				Click this button to reset the currently saved message to default. (Automated Message: <u>Uninvited PM's</u> are not being accepted.)
 			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
@@ -357,10 +360,55 @@
 		</tr>
 		<tr bgcolor="#EAEAEA">
 			<td>
-				<b>Cancel</b>
+				<b>Help</b>
+			</td>
+			<td>
+				Click this button to access the built in help and documentation.
+			</td>
+		</tr>
+	</table>
+	<table width="100%" cellpadding="3" cellspacing="0" border="0">
+		<tr>
+			<td class='subsubtitle-table-cell'>
+				<div class='subsubtitle-text'>The <b>Backup and Restore</b> Options</div>
+			</td>
+		</tr>
+	</table>
+	<table width="100%" cellpadding="3" cellspacing="0" border="0">
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Backup</b>
+			</td>
+			<td>
+				Click this button to backup your current Whitelisted Users list and the <b>PM Manager Setup</b> configuration.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Restore</b>
+			</td>
+			<td>
+				Click this button to restore your current Whitelisted Users list and the <b>PM Manager Setup</b> configuration.
+			</td>
+		</tr>
+		<tr bgcolor="#EAEAEA">
+			<td>
+				<b>Close</b>
 			</td>
 			<td>
 				Click this button to cancel any unsaved changes and returns you to the main <b>PM Manager</b> dialog.
+			</td>
+		</tr>
+	</table>
+	<table width="100%" cellpadding="3" cellspacing="0" border="0">
+		<tr>
+			<td class='note-box'>
+				<b>Notes: </b>Most buttons are conditionally enabled/disabled in relation to their usage. Its important to note what you can do,<br>
+				The <b>Backup button</b>, is disabled until a initial backup has been made. Thereafter its always <b>ON</b> to enable you to <b>refresh</b> your current backed-up files.<br>
+				The <b>Restore button</b> is disabled until the Whitelisted Users list has been modified, and you can use the Restore function to reset your list to a previous backup.<br>
+				Because the Restore rule used to disable the button, you would be able to restore your Whitelisted Users list in case the main is empty or has less entries than the backup.<br>
+				Temporary Users are not backed-up at this time.<br>
+				If you're interested in ensuring your Whitelist and Configuration is kept safe and up-to-date, do remember to make backups regularly. ;)
 			</td>
 		</tr>
 	</table>
@@ -373,7 +421,7 @@
 		<tr bgcolor="#EAEAEA">
 			<td>
 				I would like to thank the-j0k3r for the alpha phase testing and helping to identify bugs and suggesting/helped implement them.<br>
-				Also the general monkeywork with HTML/CSS/GitHub in the spirit of opensource.
+				Also the Backup and Restore feature and general monkeywork with HTML/CSS/GitHub in the spirit of opensource.
 			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
