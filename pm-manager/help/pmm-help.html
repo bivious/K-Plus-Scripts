@@ -61,10 +61,11 @@
 			color: #186CC4;
 		}
 		.title-table-cell {
-			/* Note QtextBrowser doesnt support this border-radius */
-			/* border-top-left-radius: 3px;
-			border-top-right-radius: 3px; */
+			/* Note QtextBrowser doesnt support border-radius */
+			border-top-left-radius: 3px;
+			border-top-right-radius: 3px;
 			background-color: #F2DFB1;
+			padding: 10px 8px 8px 8px;
 		}
 		.title-text {
 			font-size: 18pt;
@@ -83,7 +84,7 @@
 		.subtitle-table-cell {
 			background-color: #D6D6D6;
 			/* top | right | bottom | left */
-			padding: 2px 0px 6px 8px
+			padding: 8px 8px 8px 8px;
 		}
 		.subtitle-text {
 			font-size: 12pt;
@@ -92,9 +93,10 @@
 		}
 		.subsubtitle-table-cell {
 			background-color: #E3E3E3;
+			padding: 8px 0px 8px 8px;
 		}
 		.subsubtitle-text {
-			font-size: 11pt;
+			font-size: 12pt;
 			color: #474747;
 		}
 		.note-box {
@@ -142,7 +144,7 @@
 		<tr>
 			<td class='title-table-cell'>
 				<div class='title-text'>PM Manager Addon - 1.0.0 &#169; 2017</div>
-				<div class='title-secondary-text'>Manage and Block Users and Uninvited PM's</div>
+				<div class='title-secondary-text'>Manage Users and Block Uninvited PM's</div>
 			</td>
 		</tr>
 		<tr>
@@ -152,13 +154,14 @@
 		</tr>
 		<tr bgcolor="#EAEAEA">
 			<td>
-				This addon is designed to globally block users from sending you private messages and easily manage via a simple whitelist implementation, which users you wish to allow to message you, while notifying both you and non-whitelisted users when such blocks
+				This addon is designed to block users globally from sending you private messages by easily managing a simple whitelist implementation, which users you wish to allow to message you, while notifying both you and non-whitelisted users when such blocks
 				occur.
 			</tr>
 		<tr bgcolor="#EAEAEA">
 			<td>
-				You have at your disposal an easy to use context menu system and a couple of dialogs that allow you to add, remove any user from your choice of a temporary or a permanent whitelist.<br>
-				There is also a dedicated option setup dialog, that allows you to configure a personalized message, which the non-whitelisted users will see, and to enable or disable notifications of blocked messages that are meant to keep you informed.
+				You have at your disposal a flexible and easy to use context menu system and a couple of dialogs that allow you to add, remove or swap any user from your choice between a single temporary or a multiple permanent whitelist.<br>
+				There is also an option setup dialog, you can configure a personalized message, which the non-whitelisted users will see, and to enable or disable notifications of blocked messages that are meant to keep you informed.
+				In addtion you have a static and simple Backup and Restore system, so you can keep your settings or whitelist safe, this also allows a greater flexibility in managing your core whitelist entries, should you prefer.
 			</td>
 		</tr>
 		<tr>
@@ -196,7 +199,7 @@
 		</tr>
 		<tr>
 			<td class='subsubtitle-table-cell'>
-				<div class='subsubtitle-text'>Via Context Menus</div>
+				<div class='subsubtitle-text'>Via <b>Context Menus</b></div>
 			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
@@ -409,7 +412,7 @@
 				<b>Notes: </b>Most buttons are conditionally enabled/disabled in relation to their usage. Its important to note what you can do,<br>
 				The <b>Backup button</b>, is disabled until a initial backup has been made. Thereafter its always <b>ON</b> to enable you to <b>refresh</b> your current backed-up files.<br>
 				The <b>Restore button</b> is disabled until the Whitelisted Users list has been modified, and you can use the Restore function to reset your list to a previous backup.<br>
-				Because the Restore rule used to disable the button, you would be able to restore your Whitelisted Users list in case the main is empty or has less entries than the backup.<br>
+				Because the Restore rule used to disable the button, you would be able to restore your Whitelisted Users list in case the main is empty or has less or more entries than the backup.<br>
 				Temporary Users are not backed-up at this time.<br>
 				If you're interested in ensuring your Whitelist and Configuration is kept safe and up-to-date, do remember to make backups regularly. ;)
 			</td>
@@ -423,16 +426,16 @@
 		</tr>
 		<tr bgcolor="#EAEAEA">
 			<td>
-				I would like to thank the-j0k3r for the alpha phase testing and helping to identify bugs and suggesting/helped implement them.<br>
-				Also the Backup and Restore feature and general monkeywork with HTML/CSS/GitHub in the spirit of opensource.
+				<b>slaboff</b>: I would like to thank the-j0k3r for the alpha phase testing and helping to identify bugs and suggesting/helping implement some improvements.<br>
+				Also for the Backup and Restore feature and general help with HTML/CSS/GitHub monkeywork in the spirit of opensource.
 			</td>
 		</tr>
 		<tr bgcolor="#EAEAEA">
 			<td>
-				Message from the-j0k3r: I hope everyone enjoys the addon as much as I do. We now have the means to combat spammers in a whole different level.<br>
-				I would like to thank slaboff and praise him for the continued dedication to KVIrc scripting, inspite that maybe, during this process, he<br>
-				very likely pulled a few hairs out as a result. Sorry ;)
-				Thank you also for sharing your fun and extremely useful scripts with the community. Its terrific stuff, keep it up! ;)
+				<b>the-j0k3r</b>: I hope everyone enjoys the addon as much as I do. Thanks to slaboff we now have the means to combat spammers in a whole different level.<br>
+				I would like to praise slaboff for his continued dedication to KVIrc scripting, inspite that maybe, during this process,<br>
+				he very likely pulled a few hairs out as a result. Sorry ;)
+				Thank you also for sharing your fun and extremely useful scripts/addons with the community. Its terrific stuff, keep it up! ;)
 			</td>
 		</tr>
 		<tr>
@@ -446,7 +449,7 @@
 			</td>
 		</tr>
 	</table>
-	<div class='footer'>PM Manager Addon v1.0.0 Documentation &#169; 2017 by slaboff</div>
+	<div class='footer'>PM Manager Addon Documentation &#169; 2017 by the-j0k3r</div>
 </body>
 
 </html>

@@ -62,9 +62,11 @@
             color: #186CC4;
         }
         .title-table-cell {
+            /* Note QtextBrowser doesnt support border-radius */
             border-top-left-radius: 3px;
             border-top-right-radius: 3px;
             background-color: #F2DFB1;
+            padding: 10px 8px 8px 8px;
         }
         .title-text {
             font-size: 18pt;
@@ -83,7 +85,7 @@
         .subtitle-table-cell {
             background-color: #D6D6D6;
             /* top | right | bottom | left */
-            padding: 2px 0px 6px 8px
+            padding: 8px 8px 8px 8px;
         }
         .subtitle-text {
             font-size: 12pt;
@@ -92,9 +94,10 @@
         }
         .subsubtitle-table-cell {
             background-color: #E3E3E3;
+            padding: 8px 0px 8px 8px;
         }
         .subsubtitle-text {
-            font-size: 11pt;
+            font-size: 12pt;
             color: #474747;
         }
         .switch-table {
@@ -396,6 +399,7 @@
             </td>
         </tr>
     </table>
+    <div class='footer'>PM Manager Addon Documentation &#169; 2017 by the-j0k3r</div>
 </body>
 
 </html>
