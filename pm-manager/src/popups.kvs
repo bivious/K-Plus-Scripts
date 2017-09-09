@@ -200,7 +200,7 @@ defpopup(QUPM.controls)
 
 	item(Help, $icon(questionmark))
 	{
-		help.open -m $file.localdir("help/pmm-help.html")
+		help.open -m $escape($file.localdir(help/pmm-help.html))
 	}
 }
 popup.delitem -q channeltextview QUPM.separator0

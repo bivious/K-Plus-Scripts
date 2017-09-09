@@ -22,7 +22,6 @@
 # Since it will abort with an error when a greater version is already installed
 %mypath = $file.extractPath($0)
 addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Uninvited PM's", "4.9.2", $file.localdir(pics/pmmanager_large.png))
-
 {
 	# This is our uninstall callback:
 	# it will be called by KVIrc when addon.uninstall is invoked

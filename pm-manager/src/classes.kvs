@@ -66,12 +66,12 @@ class("qupm::setup", "widget")
 
 			echo -w=$active -i=$msgtype(GenericSuccess) "Notice: The current %filePMMConfig and %fileWhitelist have been successfully restored."
 			return $true
-			}
-			else
-			{
-				echo -w=$active -i=$msgtype(GenericError) "Error: Sorry, something went wrong beyond my control."
-				return $false
-			}
+		}
+		else
+		{
+			echo -w=$active -i=$msgtype(GenericError) "Error: Sorry, something went wrong beyond my control."
+			return $false
+		}
 	}
 
 	function loadSetUp()
@@ -294,7 +294,7 @@ class("qupm::setup", "widget")
 
 		privateimpl(@%btnHelpf, clickEvent)
 		{
-			help.open -m $escape($file.localdir("help/pmm-help.html"))
+			help.open -m $escape($file.localdir(help/pmm-help.html))
 		}
 
 		%backupDirPath = $escape($file.localdir(config/scripts/PMM-Backup))
@@ -310,8 +310,8 @@ class("qupm::setup", "widget")
 
 		if((!$file.exists(%sourcePthWlst)) || (!$file.exists(%sourcePathCfg)))
 			@%btnBckpC->$setEnabled(0)
-		//if(!$file.exists(%sourcePathCfg))
-			//@%btnBckpC->$setEnabled(0)
+		#if(!$file.exists(%sourcePathCfg))
+			#@%btnBckpC->$setEnabled(0)
 		else
 			@%btnBckpC->$setEnabled(1)
 
@@ -330,8 +330,8 @@ class("qupm::setup", "widget")
 			@$parent->$parent->%btnRstrC->$setEnabled(0)
 		}
 
-		//if(!$file.exists(%backupDirPath))
-			//@%btnRstrC->$setEnabled(0)
+		#if(!$file.exists(%backupDirPath))
+			#/@%btnRstrC->$setEnabled(0)
 		if(($file.size(%sourcePthWlst)) == ($file.size(%destntPthWlst)))
 			@%btnRstrC->$setEnabled(0)
 		else

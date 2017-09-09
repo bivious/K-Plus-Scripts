@@ -59,6 +59,7 @@ class(installer,object)
 {
 	constructor()
 	{
+		# placeholder
 	}
 
 	copyFiles($0 = source dir,$1 = file regexp,$2 = target dir)
