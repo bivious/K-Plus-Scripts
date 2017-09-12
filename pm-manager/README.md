@@ -39,10 +39,10 @@ Once you have the files extracted.
 * Via the scripting Menu Entry and select `Execute Script`
 * Or via ```Ctrl+Shift+X```
 * Navigate to location you extracted the addon
-  then select the ```install.kvs`` file and click open.
+  then select the ```install.kvs``` file and click open.
 
 #### From Binary
-* ![Click here to download the PM_Manager_$version.zip](https://github.com/the-j0k3r/kvirc-scripts/raw/pm-manager/pm-manager/PM_Manager-1.0.0-beta2.zip) and extract it.
+* ![Click here to download the PM_Manager_$version.zip](https://github.com/the-j0k3r/kvirc-scripts/raw/pm-manager/pm-manager/PM_Manager-1.0.0-beta3.zip) and extract it.
 * Goto Settings menu or press ```Ctrl+Shft+N```
 * Scroll to Use the `Manage Addons`
 * Click the Open Box Icon (Install addon package from disk) and Browse for the extracted ```PM_Manager_$version.kva```
@@ -58,7 +58,9 @@ Notice: PM Manager Addon Version - 1.0.0  Initialization Complete.
 
 * Goto Settings menu
 * Scroll to Use the `Manage Addons` or ```Ctrl+Shft+N```
-* Select the addon and click the Bin Icon (Delete selected addon) to remove the PM Manager.
+* Select the addon and click the Bin Icon (Delete selected addon) to remove the PM Manager
+
+>#### Note: When uninstalling and if you made a backup during usage, you will be asked if you wish to remove this backup. If you are planning to re-install the addon at a later time, click **NO**.
 
 You should see the following message:
 ```
@@ -77,7 +79,7 @@ Notice: PM Manager Addon v1.0.0 has been successfully removed.
 
 ### Usage
 
-See the PM Manager's ![help file here](http://htmlpreview.github.io/?https://github.com/the-j0k3r/kvirc-scripts/blob/pm-manager/pm-manager/help/pmm-help.html)
+See the PM Manager's help file [here](http://htmlpreview.github.io/?https://github.com/the-j0k3r/kvirc-scripts/blob/pm-manager/pm-manager/help/pmm-help.html)
 
 ### License
 

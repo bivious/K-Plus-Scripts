@@ -21,13 +21,13 @@
 # Register the script: this must be the first instruction executed
 # Since it will abort with an error when a greater version is already installed
 %mypath = $file.extractPath($0)
-addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Uninvited PM's", "4.9.2", $file.localdir(pics/pmmanager_large.png))
+addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Uninvited PM's", "4.9.2", $escape($file.localdir(pics/pmmanager_large.png)))
 {
 	# This is our uninstall callback:
 	# it will be called by KVIrc when addon.uninstall is invoked
 	# This is an automatically generated alias that will erase the installed files
-	file.remove -q $file.localdir/config/scripts/QUPMM.kvc
-	file.remove -q $file.localdir/mywhitelist.txt
+	file.remove -q $escape($file.localdir(config/scripts/QUPMM.kvc))
+	file.remove -q $escape($file.localdir(mywhitelist.txt))
 
 	%temp = $window("Blocked PM")
 	if($window.exists(%temp))
@@ -45,6 +45,22 @@ addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Unin
 	unset %G_pmPMLog
 	unset %G_bDupeUser
 	unset %G_pmWhiteList
+
+	if($file.exists($escape($file.localdir(config/scripts/PMM-Backup/QUPMM.kvc))))
+	{
+		%answer = $dialog.yesno("PM Manager - Uninstallation", "Do you also wish to remove the PM Manager's \nBackup and Restore files at this time?")
+		if(%answer == 1)
+		{
+			echo -w=$active -i=$msgtype(GenericWarning) "User has selected to remove current Backup and Restore files."
+			file.remove -q $escape($file.localdir(config/scripts/PMM-Backup/QUPMM.kvc))
+			file.remove -q $escape($file.localdir(config/scripts/PMM-Backup/mywhitelist.txt))
+			file.rmdir -q $escape($file.localdir(config/scripts/PMM-Backup))
+		}
+		else
+		{
+			echo -w=$active -i=$msgtype(GenericStatus) "User has selected to keep current Backup and Restore files."
+		}
+	}
 
 	echo -w=$active -i=$msgtype(GenericStatus) "Notice: PM Manager Addon v1.0.0 has been successfully removed."
 	qupm::uninstallfiles
@@ -67,24 +83,24 @@ parse %mypath/utils/installer.kvs
 
 # Copy icons to pics directory
 # Making sure directory exists
-if(!$file.exists($file.localdir("pics")))
-	file.mkdir $file.localdir("pics")
+if(!$file.exists($escape($file.localdir(pics))))
+	file.mkdir $escape($file.localdir(pics))
 
-%installer->$copyFiles("%mypath/pics/","*.png","$file.localdir("pics")")
+%installer->$copyFiles("%mypath/pics/","*.png","$escape($file.localdir(pics))")
 
 # Copy html help files
 # Check if directory exists
-if(!$file.exists($file.localdir("help")))
-	file.mkdir $file.localdir("help")
+if(!$file.exists($escape($file.localdir(help))))
+	file.mkdir $escape($file.localdir(help))
 
-%installer->$copyFiles("%mypath/help/","*.html","$file.localdir("help")")
+%installer->$copyFiles("%mypath/help/","*.html","$escape($file.localdir(help))")
 
 # Copy image files for html
 # Create directory images to store
-if(!$file.exists($file.localdir("help/images")))
-	file.mkdir $file.localdir("help/images")
+if(!$file.exists($escape($file.localdir(help/images))))
+	file.mkdir $escape($file.localdir(help/images))
 
-%installer->$copyFiles("%mypath/help/images","*.png","$file.localdir("help/images")")
+%installer->$copyFiles("%mypath/help/images","*.png","$escape($file.localdir(help/images))")
 
 # Then generate the uninstall alias
 %installer->$generateUninstallAlias("qupm::uninstallfiles")
