@@ -36,6 +36,7 @@ event(OnKVIrcStartup, blockPM)
 	%pmoptions = $config.open(QUPMM.kvc)
 	%G_pmReplyMsg = $config.read(%pmoptions, PMMSG)
 	%G_pmPMLog = $config.read(%pmoptions, PMLOG)
+	%G_pmEState = $config.read(%pmoptions, PMSTA)
 	config.close %pmoptions
 }
 

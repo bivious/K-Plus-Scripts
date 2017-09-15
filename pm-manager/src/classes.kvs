@@ -26,9 +26,11 @@ class("qupm::setup", "widget")
 		@%setup = $config.open(QUPMM.kvc)
 		config.write @%setup PMMSG $0
 		config.write @%setup PMLOG $1
+		config.write @%setup PMSTA $2
 		config.close @%setup
 		%G_pmReplyMsg = $0
 		%G_pmPMLog = $1
+		%G_pmEState = $2
 		return $true
 	}
 
@@ -79,9 +81,11 @@ class("qupm::setup", "widget")
 		@%setup = $config.open(QUPMM.kvc)
 		@%cfg_pmreply = $config.read(@%setup, PMMSG)
 		@%cfg_pmlog = $config.read(@%setup, PMLOG)
+		@%cfg_pmstate = $config.read(@%setup, PMSTA)
 		config.close @%setup
 		%G_pmReplyMsg = @%cfg_pmreply
 		%G_pmPMLog = @%cfg_pmlog
+		%G_pmEState = @%cfg_pmstate
 		return $true
 	}
 
@@ -286,7 +290,8 @@ class("qupm::setup", "widget")
 				@%cfg_pmreply = $false;
 
 			@%cfg_pmlog = @$parent->$parent->%ckxPMLog->$isChecked()
-			@$parent->$parent->$saveSetUp(@%cfg_pmreply, @%cfg_pmlog)
+			@%cfg_status = $isEventEnabled(OnQueryMessage, blockPM)
+			@$parent->$parent->$saveSetUp(@%cfg_pmreply, @%cfg_pmlog, @%cfg_status)
 			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The current settings have been saved."
 			%G_qupmManager->%btnOptions->$setEnabled(1)
 			delete @$parent->$parent
@@ -310,8 +315,6 @@ class("qupm::setup", "widget")
 
 		if((!$file.exists(%sourcePthWlst)) || (!$file.exists(%sourcePathCfg)))
 			@%btnBckpC->$setEnabled(0)
-		#if(!$file.exists(%sourcePathCfg))
-			#@%btnBckpC->$setEnabled(0)
 		else
 			@%btnBckpC->$setEnabled(1)
 
@@ -328,14 +331,14 @@ class("qupm::setup", "widget")
 					@$parent->$parent->%btnRstrC->$setEnabled(0)
 			}
 			@$parent->$parent->%btnRstrC->$setEnabled(0)
+			@$parent->$parent->$loadSetUp()
 		}
 
-		#if(!$file.exists(%backupDirPath))
-			#/@%btnRstrC->$setEnabled(0)
 		if(($file.size(%sourcePthWlst)) == ($file.size(%destntPthWlst)))
 			@%btnRstrC->$setEnabled(0)
 		else
 			@%btnRstrC->$setEnabled(1)
+
 		if(((!$file.exists(%backupDirPath)) && (!$file.exists(%destntPathCfg)) || (!$file.exists(%destntPthWlst))))
 			@%btnRstrC->$setEnabled(0)
 
@@ -377,6 +380,19 @@ class("qupm::setup", "widget")
 					@$parent->$parent->%ckxPMLog->$setChecked($false)
 					@$parent->$parent->%btnSSave->$setEnabled(0)
 				}
+
+				if(%G_pmEState == 1)
+				{
+					%G_qupmManager->%btnPMStatus->$setText("&Blocker OFF")
+					%G_qupmManager->%btnPMStatus->$setTooltip("<p><pre>Click to disable the PM blocker.</pre></p>")
+					eventctl -e OnQueryMessage blockPM
+				}
+				else
+				{
+					%G_qupmManager->%btnPMStatus->$setText("&Blocker ON")
+					%G_qupmManager->%btnPMStatus->$setTooltip("<p><pre>Click to enable the PM blocker.</pre></p>")
+					eventctl -d OnQueryMessage blockPM
+				}
 			}
 			@$parent->$parent->%btnRstrC->$setEnabled(0)
 		}
@@ -411,7 +427,6 @@ class("qupm::setup", "widget")
 		if((($file.exists(%backupDirPath)) && ($file.exists(%destntPathCfg)) && ($file.exists(%destntPthWlst))))
 		{
 			echo -w=$active -i=$msgtype(GenericSuccess) "Notice: Found $b%backupDirPath$b."
-			#echo -w=$active -i=$msgtype(GenericSuccess) "Notice: Found $b%filePMMConfig$b and $b%fileWhitelist$b in backup directory."
 			echo -w=$active -i=$msgtype(GenericWarning) "Notice: Existing backup found, proceeding with a refresh backup operation in case of changes."
 
 			if(!$file.exists(%backupDirPath))
@@ -425,7 +440,6 @@ class("qupm::setup", "widget")
 				if($file.size(%sourcePthWlst))
 				{
 					file.copy -o %sourcePathCfg %destntPathCfg
-					#echo -w=$active -i=$msgtype(GenericSuccess) "Notice: Copied %fileWhitelist file to backup."
 				}
 				else
 				{
@@ -436,7 +450,6 @@ class("qupm::setup", "widget")
 				if($file.size(%sourcePathCfg))
 				{
 					file.copy -o %sourcePthWlst %destntPthWlst
-					#echo -w=$active -i=$msgtype(GenericSuccess) "Notice: Copied %filePMMConfig file to backup."
 				}
 				else
 				{
@@ -804,7 +817,8 @@ class("qupm::main", "widget")
 		privateimpl(@%btnExit, clickEvent)
 		{
 			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager has been closed."
-			@$parent->$parent->$hide()
+			unset %G_qupmManager
+			delete @$parent->$parent
 		}
 
 		privateimpl(@%btnRfrsh, clickEvent)
@@ -871,23 +885,27 @@ class("qupm::main", "widget")
 				@$parent->$parent->%btnPMStatus->$setTooltip("<p><pre>Click to disable the PM blocker.</pre></p>")
 				%reply = $k(9)"ON"$k
 				echo -w=$active -i=$msgtype(GenericStatus) "PM Blocker Status:" $b%reply$b
-				halt;
+				%G_pmEState = $true
 			}
-
-			if($isEventEnabled(OnQueryMessage, blockPM))
+			else
 			{
 				eventctl -d OnQueryMessage blockPM
 				@$parent->$parent->%btnPMStatus->$setText("&Blocker ON")
 				@$parent->$parent->%btnPMStatus->$setTooltip("<p><pre>Click to enable the PM blocker.</pre></p>")
 				%reply = $k(4)"OFF"$k
 				echo -w=$active -i=$msgtype(GenericStatus) "PM Blocker Status:" $b%reply$b
-				halt;
+				%G_pmEState = $false
 			}
+
+			%update = $config.open(QUPMM.kvc)
+			config.write %update PMSTA %G_pmEState
+			config.close %update
 		}
 
 		privateimpl($$, closeEvent)
 		{
 			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager has been closed."
+			unset %G_qupmManager
 			@$destructor()
 		}
 	}

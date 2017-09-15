@@ -27,8 +27,10 @@
 %pmoptions = $config.open(QUPMM.kvc)
 %G_pmReplyMsg = $config.read(%pmoptions, PMMSG, $false)
 %G_pmPMLog = $config.read(%pmoptions, PMLOG, $true)
+%G_pmEState = $config.read(%pmoptions, PMSTA, $false)
 config.write %pmoptions PMMSG %G_pmReplyMsg
 config.write %pmoptions PMLOG %G_pmPMLog
+config.write %pmoptions PMSTA %G_pmEState
 config.close %pmoptions
 eventctl -d OnQueryMessage blockPM
 echo -i=$msgtype(GenericSuccess) "Notice: PM Manager Addon v"%version" Initialization Complete."

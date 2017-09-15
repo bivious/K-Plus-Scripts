@@ -43,6 +43,7 @@ addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Unin
 	unset %G_qupmManager
 	unset %G_pmReplyMsg
 	unset %G_pmPMLog
+	unset %G_pmEState
 	unset %G_bDupeUser
 	unset %G_pmWhiteList
 

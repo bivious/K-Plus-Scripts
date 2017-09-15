@@ -167,7 +167,7 @@ defpopup(QUPM.controls)
 {
 	prologue
 	{
-		%:Blocked = $isEventEnabled(OnQueryMessage,blockPM)
+		%:Blocked = $isEventEnabled(OnQueryMessage, blockPM)
 	}
 
 	item(Open PM Manager, $icon(query))
@@ -187,12 +187,24 @@ defpopup(QUPM.controls)
 	item(Enable PM Blocker, $icon(accept)) (!%:Blocked)
 	{
 		eventctl -e OnQueryMessage blockPM
+		%G_pmEState = $true
+		%update = $config.open(QUPMM.kvc)
+		config.write %update PMSTA %G_pmEState
+		config.close %update
+		%G_qupmManager->%btnPMStatus->$setText("&Blocker OFF")
+		%G_qupmManager->%btnPMStatus->$setTooltip("<p><pre>Click to disable the PM blocker.</pre></p>")
 		echo -w=$window(%winid) -i=$msgtype(GenericSuccess) "Notice: The PM blocker has been successfully enabled!"
 	}
 
 	item(Disable PM Blocker, $icon(discard)) (%:Blocked)
 	{
 		eventctl -d OnQueryMessage blockPM
+		%G_pmEState = $false
+		%update = $config.open(QUPMM.kvc)
+		config.write %update PMSTA %G_pmEState
+		config.close %update
+		%G_qupmManager->%btnPMStatus->$setText("&Blocker ON")
+		%G_qupmManager->%btnPMStatus->$setTooltip("<p><pre>Click to enable the PM blocker.</pre></p>")
 		echo -w=$window(%winid) -i=$msgtype(GenericWarning) "Notice: The PM blocker has been successfully disabled!"
 	}
 
