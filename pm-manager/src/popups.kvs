@@ -152,15 +152,18 @@ defpopup(QUPM.users)
 
 	label(%:ownNickLabelText) (%:MyNick)
 }
-
 popup.delitem -q channel QUPM.separator0
+popup.delitem -q defaulttextview QUPM.separator0
 popup.delitem -q querytextview QUPM.separator0
 popup.addSeparator channel QUPM.separator0
+popup.addSeparator defaulttextview QUPM.separator0
 popup.addSeparator querytextview QUPM.separator0
 popup.delitem -q channel QUPM.users
+popup.delitem -q defaulttextview QUPM.users
 popup.delitem -q querytextview QUPM.users
 # We $escape the path else the KVS interpreter will strip the single slash when context menu is called in Windows
 popup.addExtPopup channel QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
+popup.addExtPopup defaulttextview QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
 popup.addExtPopup querytextview QUPM.users "PM Manager" $escape($file.localdir(pics/pmmanager_small.png)) QUPM.users
 
 defpopup(QUPM.controls)

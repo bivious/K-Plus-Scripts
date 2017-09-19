@@ -33,12 +33,14 @@ addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Unin
 	if($window.exists(%temp))
 		window.close -q %temp;
 
-	popup.delitem -d -q channeltextview QUPM.controls
-	popup.delitem -d -q channeltextview QUPM.separator0
-	popup.delitem -d -q querytextview QUPM.users
-	popup.delitem -d -q querytextview QUPM.separator0
 	popup.delitem -d -q channel QUPM.users
 	popup.delitem -d -q channel QUPM.separator0
+	popup.delitem -d -q channeltextview QUPM.controls
+	popup.delitem -d -q channeltextview QUPM.separator0
+	popup.delitem -q -q defaulttextview QUPM.users
+	popup.delitem -q -q defaulttextview QUPM.separator0
+	popup.delitem -d -q querytextview QUPM.users
+	popup.delitem -d -q querytextview QUPM.separator0
 
 	unset %G_qupmManager
 	unset %G_pmReplyMsg
