@@ -582,28 +582,47 @@ class("qupm::main", "widget")
 			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The whitelist has been saved successfully."
 	}
 
-	function loadList()
+	function loadList($0 = winid)
 	{
-		%mywhitelist = $escape($file.localdir(mywhitelist.txt))
-		%inFile = %mywhitelist
-		%conf = $config.open(%inFile, r)
-		config.setsection %conf whitelist
-		%whitelist = $config.keylist(%conf)
-
-		foreach(%i, %whitelist)
+		if(!$file.exists($escape($file.localdir(mywhitelist.txt))))
 		{
-			%trusteduser[%i] = $config.read(%conf, %i)
+			echo -w=$active -i=$msgtype(GenericWarning) "Notice: No whitelist file found, could be first run."
+		}
+		else
+		{
+			%mywhitelist = $escape($file.localdir(mywhitelist.txt))
+			%inFile = %mywhitelist
+			%conf = $config.open(%inFile, r)
+			config.setsection %conf whitelist
+			%whitelist = $config.keylist(%conf)
+
+			foreach(%i, %whitelist)
+			{
+				%trusteduser[%i] = $config.read(%conf, %i)
+			}
+
+			config.close %conf
+			unset %G_pmWhiteList
+			%G_qupmManager->%lbTrustedUsers->$clear()
+			%t = %trusteduser[]#
+
+			for(%i = 0; %i < %t; %i++)
+			{
+				@%lbTrustedUsers->$insertItem(%trusteduser[%i])
+				%G_pmWhiteList[%i] = %trusteduser[%i]
+			}
 		}
 
-		config.close %conf
-		unset %G_pmWhiteList
-		%t = %trusteduser[]#
-
-		for(%i = 0; %i < %t; %i++)
+		if($isSet($0))
 		{
-			@%lbTrustedUsers->$insertItem(%trusteduser[%i])
-			%G_pmWhiteList[%i] = %trusteduser[%i]
+			%G_qupmManager->%lbChanUsers->$clear()
+			%channelusers = $chan.users($0)
+			foreach(%i,%channelusers)
+			{
+				@%lbChanUsers->$insertItem(%i)
+			}
 		}
+		return $true
 	}
 
 	function destructor()
@@ -675,17 +694,6 @@ class("qupm::main", "widget")
 
 		@%lbTrustedUsers = $new(listbox, $$)
 		@%lbTrustedUsers->$setToolTip("<p><pre>Highlight the user to remove from the whitelist.</pre></p>")
-
-		%id = $active()
-		if($window.type(%id) == "channel")
-		{
-			%channelusers = $chan.users(%id)
-			foreach(%i,%channelusers)
-			{
-				@%lbChanUsers->$insertItem(%i)
-			}
-			@$loadList()
-		}
 
 		@%btnPMStatus = $new(button, @%hboxCMDS1)
 		@%btnPMStatus->$setText("&Blocker ON")
@@ -823,28 +831,22 @@ class("qupm::main", "widget")
 
 		privateimpl(@%btnRfrsh, clickEvent)
 		{
-			# Cheating here forcing a whitelist refresh in case a manual restore of a backup was done and we need to force refresh.
-			%G_qupmManager->%lbTrustedUsers->$clear()
-			%G_qupmManager->$loadList()
-			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The "$b"Whitelisted Users"$b" list has been refreshed successfully."
-
 			%id = $active()
 			if($window.type(%id) != "channel")
 			{
 				echo -w=$active -i=$msgtype(GenericWarning) "Notice: This is not a valid channel window."
 				halt;
 			}
-
-			if($window.type(%id) == "channel")
+			else
 			{
-				@$parent->$parent->%lbChanUsers->$clear()
-				%channelusers = $chan.users(%id)
-				foreach(%i, %channelusers)
-				{
-					@$parent->$parent->%lbChanUsers->$insertItem(%i)
-				}
+				%refresh = %G_qupmManager->$loadList(%id)
 			}
-			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The $b$chan.name(%id)$b Channel Users list has been refreshed successfully."
+
+			if(%refresh == $true)
+			{
+				echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The "$b"Whitelisted Users"$b" list has been refreshed successfully."
+				echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The $b$chan.name(%id)$b Channel Users list has been refreshed successfully."
+			}
 		}
 
 		privateimpl(@%btnRemUser, clickEvent)

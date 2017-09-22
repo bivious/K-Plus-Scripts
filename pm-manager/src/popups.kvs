@@ -178,11 +178,15 @@ defpopup(QUPM.controls)
 		if(!$objects.exists(%G_qupmManager))
 		{
 			%G_qupmManager = $new(qupm::main)
+			%id = $active()
+			%G_qupmManager->$loadList(%id)
 			%G_qupmManager->$show()
 		}
 		else
 		{
 			%G_qupmManager->$hide()
+			%id = $active()
+			%G_qupmManager->$loadList(%id)
 			%G_qupmManager->$show()
 		}
 	}
