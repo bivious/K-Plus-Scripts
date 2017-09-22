@@ -42,15 +42,15 @@ Once you have the files extracted.
   then select the ```install.kvs``` file and click open.
 
 #### From Binary
-* ![Click here to download the PM_Manager_$version.zip](https://github.com/the-j0k3r/kvirc-scripts/raw/pm-manager/pm-manager/PM_Manager-1.0.0-beta4.zip) and extract it.
+* Click [here to download the PM_Manager_$version.zip](https://github.com/the-j0k3r/kvirc-scripts/raw/pm-manager/pm-manager/PM%20Manager-1.0.0-beta5.zip) verify [SHA256 Checksum](https://github.com/the-j0k3r/kvirc-scripts/raw/pm-manager/pm-manager/sha256sum.txt) and extract it.
+###### SHA256 Checksum
+```hash
+d470f69a68eeb748a206e1d190ffcc3444f87d2ebfec563eb7fd230b146e7c9c
+```
+
 * Goto Settings menu or press ```Ctrl+Shft+N```
 * Scroll to Use the `Manage Addons`
 * Click the Open Box Icon (Install addon package from disk) and Browse for the extracted ```PM_Manager_$version.kva```
-
-##### SHA256 Hash
-```hash
-155D63C7D1763AB2957734490BED7AC39DAD1AC0F7E2B3A8E6B85CAA67187014
-```
 
 You should see the following lines (no matter the install method used):
 ```
