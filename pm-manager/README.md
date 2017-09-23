@@ -42,7 +42,7 @@ Once you have the files extracted.
   then select the ```install.kvs``` file and click open.
 
 #### From Binary
-* Click [here to download the PM_Manager_$version.zip](https://github.com/the-j0k3r/kvirc-scripts/raw/pm-manager/pm-manager/PM%20Manager-1.0.0-beta5.zip) verify [SHA256 Checksum](https://github.com/the-j0k3r/kvirc-scripts/raw/pm-manager/pm-manager/sha256sum.txt) and extract it.
+* Click [here to download the PM_Manager_$version.zip](https://github.com/the-j0k3r/KVIrc-Plus-Scripts/raw/pm-manager/pm-manager/PM%20Manager-1.0.0-beta5.zip) verify [SHA256 Checksum](https://github.com/the-j0k3r/KVIrc-Plus-Scripts/raw/pm-manager/pm-manager/sha256sum.txt) and extract it.
 ###### SHA256 Checksum
 ```hash
 d470f69a68eeb748a206e1d190ffcc3444f87d2ebfec563eb7fd230b146e7c9c
@@ -84,7 +84,7 @@ Notice: PM Manager Addon v1.0.0 has been successfully removed.
 
 ### Usage
 
-See the PM Manager's help file [here](http://htmlpreview.github.io/?https://github.com/the-j0k3r/kvirc-scripts/blob/pm-manager/pm-manager/help/pmm-help.html)
+See the PM Manager's help file [here](http://htmlpreview.github.io/?https://github.com/the-j0k3r/KVIrc-Plus-Scripts/blob/pm-manager/pm-manager/help/pmm-help.html)
 
 ### License
 
