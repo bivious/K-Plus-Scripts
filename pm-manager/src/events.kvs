@@ -48,6 +48,10 @@ event(OnQueryMessage, blockPM)
 	if($my.nick == $0)
 		return;
 
+	# exclude znc queries from block
+	if($str.left($0, 1) == "*")
+		return;
+
 	foreach(%user, %G_pmWhiteList)
 	{
 		if($0 == %user)

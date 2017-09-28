@@ -21,15 +21,14 @@ The PM Manager allows you to easily keep a single working and refreshable backup
   * Comprehensive tooltips in all controls that show hints of what controls do.
 * A static Backup and Restore functionality for permanent whitelist and main PM Manager configuration saving.
 * Comprehensive in active window feedback messaging, serving as visual confirmations.
-* Comprehensive support for keyboard access via Alt+"Key"
+* Comprehensive support for keyboard access via Alt+"Key".
+* A ZNC friendly default exclusion rule.
 * A comprehensive help file.
 
 ### Todo
 
-* Add screenshots of context menu options to help file.
 * Bump version to beta at some stage?
 * More testing
-* Make PR to upstream.
 
 ### Install
 
@@ -42,10 +41,10 @@ Once you have the files extracted.
   then select the ```install.kvs``` file and click open.
 
 #### From Binary
-* Click [here to download the PM_Manager_$version.zip](https://github.com/the-j0k3r/KVIrc-Plus-Scripts/raw/pm-manager/pm-manager/PM%20Manager-1.0.0-beta5.zip) verify [SHA256 Checksum](https://github.com/the-j0k3r/KVIrc-Plus-Scripts/raw/pm-manager/pm-manager/sha256sum.txt) and extract it.
+* Click [here to download the PM_Manager_$version.zip](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/PM%20Manager-1.0.0-beta-6.zip) verify [SHA256 Checksum](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/sha256sum.txt) and extract it.
 ###### SHA256 Checksum
 ```hash
-d470f69a68eeb748a206e1d190ffcc3444f87d2ebfec563eb7fd230b146e7c9c
+73a39a9313c585049894904af5a9102565177c64466e6b16ecc5a40d02e335a5
 ```
 
 * Goto Settings menu or press ```Ctrl+Shft+N```
@@ -84,7 +83,7 @@ Notice: PM Manager Addon v1.0.0 has been successfully removed.
 
 ### Usage
 
-See the PM Manager's help file [here](http://htmlpreview.github.io/?https://github.com/the-j0k3r/KVIrc-Plus-Scripts/blob/pm-manager/pm-manager/help/pmm-help.html)
+See the PM Manager's help file [here](http://htmlpreview.github.io/?https://github.com/bivious/k-plus-scripts/blob/pm-manager/pm-manager/help/pmm-help.html)
 
 ### License
 
