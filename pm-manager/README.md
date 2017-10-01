@@ -27,8 +27,9 @@ The PM Manager allows you to easily keep a single working and refreshable backup
 
 ### Todo
 
-* Bump version to beta at some stage?
-* More testing
+* Bump version 1.x.x at some stage?
+* support earlier versions?
+* More testing, gather feedback.
 
 ### Install
 
@@ -36,20 +37,20 @@ The PM Manager allows you to easily keep a single working and refreshable backup
 
 Once you have the files extracted.
 * Via the scripting Menu Entry and select `Execute Script`
-* Or via ```Ctrl+Shift+X```
+* Or via `Ctrl+Shift+X`
 * Navigate to location you extracted the addon
-  then select the ```install.kvs``` file and click open.
+  then select the `install.kvs` file and click open.
 
 #### From Binary
-* Click [here to download the PM_Manager_$version.zip](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/PM%20Manager-1.0.0-beta-6.zip) verify [SHA256 Checksum](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/sha256sum.txt) and extract it.
+* Click [here to download the PM_Manager_$version.zip](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/PM_Manager-1.0.0-beta-7.zip "PM_Manager-1.0.0-beta-7.zip") verify [SHA256 Checksum](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/sha256sum.txt "sha256sum.txt") and extract it.
 ###### SHA256 Checksum
 ```hash
-73a39a9313c585049894904af5a9102565177c64466e6b16ecc5a40d02e335a5
+ceea9668e9e3debc016935bcbd0364863da64cccfb41caddd49e1f6053bb606e
 ```
 
-* Goto Settings menu or press ```Ctrl+Shft+N```
+* Goto Settings menu or press `Ctrl+Shft+N`
 * Scroll to Use the `Manage Addons`
-* Click the Open Box Icon (Install addon package from disk) and Browse for the extracted ```PM_Manager_$version.kva```
+* Click the Open Box Icon (Install addon package from disk) and Browse for the extracted `PM_Manager_$version.kva`
 
 You should see the following lines (no matter the install method used):
 ```
@@ -61,7 +62,7 @@ Notice: PM Manager Addon Version - 1.0.0  Initialization Complete.
 ### Uninstall
 
 * Goto Settings menu
-* Scroll to Use the `Manage Addons` or ```Ctrl+Shft+N```
+* Scroll to Use the `Manage Addons` or `Ctrl+Shft+N`
 * Select the addon and click the Bin Icon (Delete selected addon) to remove the PM Manager
 
 >#### Note: When uninstalling and if you made a backup during usage, you will be asked if you wish to remove this backup. If you are planning to re-install the addon at a later time, click **NO**.
@@ -83,8 +84,8 @@ Notice: PM Manager Addon v1.0.0 has been successfully removed.
 
 ### Usage
 
-See the PM Manager's help file [here](http://htmlpreview.github.io/?https://github.com/bivious/k-plus-scripts/blob/pm-manager/pm-manager/help/pmm-help.html)
+See the PM Manager's help file [here](http://htmlpreview.github.io/?https://github.com/bivious/k-plus-scripts/blob/pm-manager/pm-manager/help/pmm-help.html "pmm-help.html")
 
 ### License
 
-[![PM Manager GPLv2+](https://img.shields.io/badge/%20%20PM_Manager%20%20-%20GPLv2+%20-blue.svg)](LICENCE)
+[![PM Manager GPLv2+](https://img.shields.io/badge/%20%20PM_Manager%20%20-%20GPLv2+%20-blue.svg)](LICENCE "PM Manager GPLv2+ Licence file")

@@ -72,7 +72,7 @@ event(OnQueryMessage, blockPM)
 		if(!$window.exists($window(%winid)))
 			$window.open("m", %winid, $context, 203)
 
-		echo -w=$window(%winid) -i=$msgtype(ignore) "$b"$date(F) "BLOCKED PM:"$b $k(0) [ User: $0 ] * Message: $3
+		echo -w=$window(%winid) -i=$msgtype(ignore) "$b"$date(F) "BLOCKED PM:"$b $k(0) [ User: \r!n\r$0\r ] * Message: $3
 	}
 
 	%winclosed = %closeit->$closePMWin(%BlockedNick)
