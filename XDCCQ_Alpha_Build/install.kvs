@@ -10,13 +10,21 @@ addon.register("[MG] XDCC Queue II","1.1.0","[MG] XDCC Queue II","Queue files to
 	# This is an automatically generated alias that will erase the installed files
  
 	file.remove -q $file.localdir/config/scripts/XDCCQ.kvc
+
 	popup.delitem -q channeltextview XDCCQ.separator0
 	popup.delitem -q channeltextview XDCCQ.menu
+
 	%temp1 = $window(%MGQCC)
 	%temp2 = $window("[MG] XDCC Queue II Loader")
-	if($window.exists(%temp1)) { window.close -q %temp1;}
-	if($window.exists(%temp2)) { window.close -q %temp2;}
+
+	if($window.exists(%temp1))
+		window.close -q %temp1;
+
+	if($window.exists(%temp2)) 
+		window.close -q %temp2;
+
 	unset %QSSL, %QDLM, %QPAS, %QBOT, %MaxDL, %QMDLC, %QMDLS, %MGQCC
+
 	mgq::uninstallfiles
 }
  
@@ -39,14 +47,17 @@ if(!$file.exists($file.localdir("pics")))
 	file.mkdir $file.localdir("pics")
 }
 %installer->$copyFiles("%mypath/pics/","*.png","$file.localdir("pics")")
+
 # parse source files
 %installer->$includeFiles("%mypath/src/","*.kvs")
 
 # then generate the uninstall alias
-%installer->$generateUninstallAlias("mgq::uninstallfiles")
 
+%installer->$generateUninstallAlias("mgq::uninstallfiles")
 %installer->$includeFiles("%mypath/","init.kvs")
+
 # finally kill the installer helper
+
 delete %installer
  
 # Done: the addon is installed and running: enjoy :)

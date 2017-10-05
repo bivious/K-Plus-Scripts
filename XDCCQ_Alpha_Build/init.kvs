@@ -9,6 +9,7 @@
 %MaxDL = $config.read(%xdccqcfg,MXDL,"1")
 %QMDLC = $config.read(%xdccqcfg,QMDLC,$true)
 %QMDLS = $config.read(%xdccqcfg,MDLS,"1.00")
+
 config.write %xdccqcfg SSL %QSSL
 config.write %xdccqcfg REGION %QBOT
 config.write %xdccqcfg PASSIVE %QPAS
@@ -17,8 +18,10 @@ config.write %xdccqcfg MXDL %MaxDL
 config.write %xdccqcfg QMDLC %QMDLC
 config.write %xdccqcfg MDLS %QMDLS
 config.close %xdccqcfg
+
 eventctl -d OnQueryNotice botQLoader
 eventctl -d OnDCCFileTransferSuccess queueXDCC
 eventctl -d OnDCCFileTransferFailed queueXDCC
 eventctl -d OnDCCFileTransferBegin qdlcheck
-echo  -i=$msgtype(GenericVerbose) "[MG] XDCC Queue II Addon Version -" %version " Initialization Complete."
+
+echo  -i=$msgtype(GenericVerbose) "[MG] XDCC Queue II Addon v%version " Initialization Complete."

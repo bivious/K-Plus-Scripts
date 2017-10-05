@@ -3,6 +3,7 @@ alias(mgq::add2q)
 	%qfilename = $0
 	%qbotnick = $1
 	%w = $window(%MGQCC)
+
 	# Check status of MYQUEUE if empty pad element 0
 	if($typeof(%MYQUEUE) == "nothing")
 	{
@@ -12,43 +13,51 @@ alias(mgq::add2q)
 		%MYQSCHK[0] = "999"
 		%MYQLB[0] = "999"
 	}
+
 	# Check for file extension
 	%exttest = $str.right(%qfilename,4)
-	if($str.left(%exttest,1) == "."){
+	if($str.left(%exttest,1) == ".")
+	{
 		%test = $($length(%qfilename)-4)
 		%t = $integer(%test)
 		%qfilename = $str.left(%qfilename,%t)
 	}
+
 	%flag = "R"
 	if(($str.contains(%qbotnick,"|P|")) && (%QPAS=="f"))
-	{
 		%flag = "P"
-	}
-	
-	if(%QSSL){
-		if(($str.contains(%qbotnick,"|S|")) || ($str.contains(%qbotnick,"-Request|")) || ($str.contains(%qbotnick,"-REQ|"))){
+
+	if(%QSSL)
+	{
+		if(($str.contains(%qbotnick,"|S|")) || ($str.contains(%qbotnick,"-Request|")) || ($str.contains(%qbotnick,"-REQ|")))
 			%flag = "S"
-		}
 	}
-	
+
 	# Check if file already added to queue
 	%count = $length(%MYQUEUE)
-	if(%count != $null){
+	if(%count != $null)
+	{
 		for(%i=0;%i<%count;%i++)
-		if(%MYQUEUE[%i] == %qfilename){
-			echo -w=$active $k(8)"[Dupe :" %qfilename " was already added.]"$k
+		{
+			if(%MYQUEUE[%i] == %qfilename)
+				echo -w=$active $k(8)"[Dupe :" %qfilename " was already added.]"$k
+
 			halt;
 		}
 	}
+
 	# Add file to queue.
 	%MYQUEUE <+ %qfilename
 	%MYQTAG <+ %flag
 	%MYQNICK <+ %qbotnick
 	%MYQSCHK <+ 1
 	%MYQLB <+ %qfilename
+
 	# Add entry to Queue Magager
 	%cqc = $(%MYQUEUE[]# - 1)
-	if($objects.exists(%G_XQManager)){%G_XQManager->%lbQL->$insertItem("Q-Slot [%cqc] -" %MYQTAG[%cqc] "-" %MYQLB[%cqc]);}
+	if($objects.exists(%G_XQManager))
+		%G_XQManager->%lbQL->$insertItem("Q-Slot [%cqc] -" %MYQTAG[%cqc] "-" %MYQLB[%cqc]);
+
 	if(($objects.exists(%G_XQManager)) && (%G_XQManager->%lbQL->$count() == 1))
 	{
 		%G_XQManager->%btnRItem->$setEnabled(1)
@@ -60,6 +69,7 @@ alias(mgq::add2q)
 		%G_XQManager->%lbQL->$setCurrentItem(0)
 	}
 	echo -w=$active $k(9)"[Added to XDCC Queue : %qfilename ]"$k
+
 	# Now that we have added our first selection null out element 0
 	%l = %MYQUEUE[]#
 	if(%l == 2)
@@ -72,18 +82,18 @@ alias(mgq::add2q)
 	}
 }
 
-
 alias(mgq::botqcheck)
 {
 	# Set a delay once triggered and check for files added to bots queue.
 	# Convert time to milliseconds
 	%checktime = $((1*60)*1000);
-	timer (checkbotq,%checktime){
+	timer (checkbotq,%checktime)
+	{
 		foreach(%reply,%BotQueued)
 		{
 			%pos = $str.lefttofirst(%reply, ". To Remove")
 			%pos = $str.rightfromlast(%pos,"in position ")
-			foreach(%i,%GETTHIS)
+			foreach(%i, %GETTHIS)
 			{
 				if($str.contains(%reply,%MYQUEUE[%i]))
 				{
@@ -94,27 +104,26 @@ alias(mgq::botqcheck)
 					%MYQNICK[%i] = $null
 					%MYQSCHK[%i] = $null
 					%l = %GETTHIS[]#
+
 					for(%x=0;%x<%l;%x++)
 					{
 						if(%GETTHIS[%x] != $null)
 						{
 							if(%GETTHIS[%x] == %i)
-							{
 								%GETTHIS[%x] = $null
-							}
 						}
 					}
+
 					%bq = %BotQueued[]#
 					for(%b=0;%b<%bq;%b++)
 					{
 						if(%BotQueued[%b] == %reply)
-						{
 							%BotQueued[%b] = $null
-						}
 					}
-				 }
+				}
 			}
 		}
+
 		# If %GETTHIS is empty move on
 		if($typeof(%GETTHIS) == "nothing")
 		{
@@ -122,68 +131,85 @@ alias(mgq::botqcheck)
 			unset %QFnames
 			unset %ErrorCheck
 			unset %BotQueued
-			if($isTimer(checkbotq)){killtimer checkbotq;}
-			timer -s (delay1, 5000)
-			if(!%QPAUSE){$mgq::xdccq(start);}
+
+			if($isTimer(checkbotq))
+				killtimer checkbotq;
+
+			timer -s (delay1, 5000);
+
+			if(!%QPAUSE)
+				$mgq::xdccq(start);
 		}
-	  }
+	}
 }
 
 
 alias(mgq::delaystart)
 {
-	# Set start time from user input 
+	# Set start time from user input
 	%dhour = $str.left($0,2)
 	%dminute = $str.right($0,2)
-	
+
 	# Execute a command at a precise time
-	    %secsfrom= $($date("H")*3600+$date("M")*60+$date("S")); #now
-	    %secsto = $((%dhour*3600)+(%dminute*60)); #end time
-	    %secsdiff=$(%secsto-%secsfrom); #difference
-	   if(%secsdiff <= 0)
-	   {
-	       #we're past that time for today
-	       %secsdiff+=86400; #60 secs * 60 mins * 24 hours
-	   }
-	   %timetostart = %secsdiff
-	   if (%timetostart >= 3600){
+	# Now
+	%secsfrom= $($date("H")*3600+$date("M")*60+$date("S"));
+
+	# End time
+	%secsto = $((%dhour*3600)+(%dminute*60));
+
+	# Difference
+	%secsdiff=$(%secsto-%secsfrom);
+	if(%secsdiff <= 0)
+	{
+		#we're past that time for today
+		%secsdiff+=86400; #60 secs * 60 mins * 24 hours
+	}
+
+	%timetostart = %secsdiff
+	if (%timetostart >= 3600)
+	{
 		%hours = %timetostart
 		%hours /= 3600
 		%timetostart -= $(3600 * %hours)
 		%display = %display  %hours "Hour"
-		if (%hours > 1){
+
+		if (%hours > 1)
 			%display = $str.append(%display,s)
-			}
-		}
-		if (%timetostart >= 60){
-			%minutes = %timetostart
-			%minutes /= 60
-			%timetostart -= $(60 * %minutes)
-			%display = %display  %minutes "Minute"
-			if (%minutes > 1){
-				%display = $str.append(%display,s)
-				}
-		}
-		if (%timetostart > 0){
+	}
+
+	if(%timetostart >= 60)
+	{
+		%minutes = %timetostart
+		%minutes /= 60
+		%timetostart -= $(60 * %minutes)
+		%display = %display  %minutes "Minute"
+
+		if(%minutes > 1)
+			%display = $str.append(%display,s)
+	}
+
+	if (%timetostart > 0)
+	{
 		%display = %display %timetostart "Second"
-		if(%timetostart > 1){
+		if(%timetostart > 1)
 			%display = $str.append(%display,s)
-			}
-		}
-	   echo -w=$active -i = $msgtype(GenericStatus) "Q-Run set to start at:" %dhour:%dminute:00 " - that's about"%display" from now."
-	    # Check if QManager widget exists and set icon for button
-	    if($objects.exists(%G_XQManager))
-	    {
-			%G_XQManager->%btnDelay->$setImage("QCDelay.png")
-			%G_XQManager->%btnStart->$setEnabled(0)
-			%G_XQManager->%btnPause->$setEnabled(0)
-	    }
-	    
-	    # timer wants msecs
-	   %msecs = $(%secsdiff*1000);
-	   timer -s -p (qdelay, %msecs)
-	   {
-	       echo -w=$active -i = $msgtype(GenericStatus) $date(H:M:S) "Wake-up! Time to start the Q-Run."
+	}
+	echo -w=$active -i = $msgtype(GenericStatus) "Q-Run set to start at:" %dhour:%dminute:00 " - that's about"%display" from now."
+
+	# Check if QManager widget exists and set icon for button
+    if($objects.exists(%G_XQManager))
+    {
+		%G_XQManager->%btnDelay->$setImage("QCDelay.png")
+		%G_XQManager->%btnStart->$setEnabled(0)
+		%G_XQManager->%btnPause->$setEnabled(0)
+    }
+
+	# timer wants msecs
+	%msecs = $(%secsdiff*1000);
+	timer -s -p (qdelay, %msecs)
+	{
+		echo -w=$active -i = $msgtype(GenericStatus) $date(H:M:S) "Wake-up! Time to start the Q-Run."
+
 		# Reset pause button in QManager
 		if($objects.exists(%G_XQManager))
 		{
@@ -193,7 +219,7 @@ alias(mgq::delaystart)
 			%G_XQManager->%btnDelay->$setEnabled(0)
 		}
 		$mgq::xdccq(start)
-	   }
+	}
 }
 
 
@@ -201,95 +227,103 @@ alias(mgq::dlQChecker)
 {
 	# Convert time to milliseconds
 	%checktime = $((6*60)*1000);
-	timer (checkqdl,%checktime){
-	if($typeof(%GETTHIS) == "array")
+	timer (checkqdl,%checktime)
 	{
-		%:Chk_Missed = %QFnames
-		# Sort and remove any dupes.
-		%checkndl = $sort(%DLQID)
-		%x = %checkndl[]#
-		for(%y=0;%y<%x;%y++)
+		if($typeof(%GETTHIS) == "array")
 		{
-			if(%checkndl[%y + 1] != %checkndl[%y])
+			%:Chk_Missed = %QFnames
+			# Sort and remove any dupes.
+			%checkndl = $sort(%DLQID)
+			%x = %checkndl[]#
+
+			for(%y=0;%y<%x;%y++)
 			{
-				%check <+ %checkndl[%y]
+				if(%checkndl[%y + 1] != %checkndl[%y])
+					%check <+ %checkndl[%y]
 			}
-		}
-		# Check if completed downloads have been cleared from transfer window
-		%checkcurrent = $sort($dcc.sessionList())
-		%count = %checkcurrent[]#
-		for(%x=0;%x<%count;%x++)
-		{
-			foreach(%z, %check)
+
+			# Check if completed downloads have been cleared from transfer window
+			%checkcurrent = $sort($dcc.sessionList())
+			%count = %checkcurrent[]#
+			for(%x=0;%x<%count;%x++)
 			{
-				if(%checkcurrent[%x] == %z)
+				foreach(%z, %check)
 				{
-					%checked <+ %checkcurrent[%x]
+					if(%checkcurrent[%x] == %z)
+						%checked <+ %checkcurrent[%x]
 				}
 			}
-		}
-		%l = %:Chk_Missed[]#
-		for(%i=0;%i<%l;%i++)
-		{
-			if(%:Chk_Missed[%i] != $null)
+
+			%l = %:Chk_Missed[]#
+			for(%i=0;%i<%l;%i++)
 			{
-				foreach(%x,%checked)
+				if(%:Chk_Missed[%i] != $null)
 				{
-					%tfname = $dcc.remoteFilename(%x)
-					if($str.contains(%tfname, %:Chk_Missed[%i]))
+					foreach(%x,%checked)
 					{
-						if(($dcc.transferStatus(%x) == "success") || ($dcc.transferStatus(%x) == "transferring") || ($dcc.transferStatus(%x) =="failure"))
+						%tfname = $dcc.remoteFilename(%x)
+						if($str.contains(%tfname, %:Chk_Missed[%i]))
 						{
-							%:Chk_Missed[%i] = ""
+							if(($dcc.transferStatus(%x) == "success") || ($dcc.transferStatus(%x) == "transferring") || ($dcc.transferStatus(%x) =="failure"))
+								%:Chk_Missed[%i] = ""
 						}
 					}
 				}
 			}
 		}
-	}
-	if($typeof(%:Chk_Missed) == "array")
-	{
-		%l = %MYQUEUE[]#
-		foreach(%y,%:Chk_Missed)
+
+		if($typeof(%:Chk_Missed) == "array")
 		{
-			if(%y != $null)
+			%l = %MYQUEUE[]#
+			foreach(%y,%:Chk_Missed)
 			{
-				for(%i=0;%i<%l;%i++)
+				if(%y != $null)
 				{
-					if(%y == %MYQUEUE[%i])
+					for(%i=0;%i<%l;%i++)
 					{
-						echo -w=$window(%MGQCC) $k(7)"File transfer from" %MYQNICK[%i] "** FAILED **  - Removed from queue -"$k
-						%failed = %MYQUEUE[%i] - %MYQNICK[%i] - ** UNKNOWN ERROR ** - Unable to initiate connection -
-						%MYQUEUE[%i] = $null
-						%MYQTAG[%i] = $null
-						%MYQNICK[%i] = $null
-						%thisgetfailed = %i
-					   	%QFails <+ %failed
-						if($isTimer(checkqdl)){killtimer checkqdl;}
+						if(%y == %MYQUEUE[%i])
+						{
+							echo -w=$window(%MGQCC) $k(7)"File transfer from" %MYQNICK[%i] "** FAILED **  - Removed from queue -"$k
+							%failed = %MYQUEUE[%i] - %MYQNICK[%i] - ** UNKNOWN ERROR ** - Unable to initiate connection -
+							%MYQUEUE[%i] = $null
+							%MYQTAG[%i] = $null
+							%MYQNICK[%i] = $null
+							%thisgetfailed = %i
+							%QFails <+ %failed
+
+							if($isTimer(checkqdl))
+								killtimer checkqdl;
+						}
+					}
+				}
+
+				%t = %GETTHIS[]#
+				for(%z=0;%z<%t;%z++)
+				{
+					if(%GETTHIS[%z] == %thisgetfailed)
+						%GETTHIS[%z] = $null
+
+				}
+
+				# Cleanup
+				if($typeof(%GETTHIS) == "nothing")
+				{
+					unset %GETTHIS
+					unset %QFnames
+					unset %ErrorCheck
+					timer -s (delay1, 5000)
+
+					if($isTimer(checkqdl))
+						killtimer checkqdl;
+
+					if($isTimer(chkstall))
+						killtimer chkstall;
+
+					if(!%QPAUSE)
+						$mgq::xdccq(start);
+				}
 			}
 		}
-	}
-	%t = %GETTHIS[]#
-	for(%z=0;%z<%t;%z++)
-	{
-		if(%GETTHIS[%z] == %thisgetfailed)
-		{
-			%GETTHIS[%z] = $null
-		}
-	}
-	# Cleanup 
-	if($typeof(%GETTHIS) == "nothing"){
-		unset %GETTHIS
-		unset %QFnames
-		unset %ErrorCheck
-		timer -s (delay1, 5000)
-		if($isTimer(checkqdl)){killtimer checkqdl;}
-		if($isTimer(chkstall)){killtimer chkstall;}
-		if(!%QPAUSE){$mgq::xdccq(start);}
-		}
-	
-	  }
-	}
 	}
 }
 
@@ -298,36 +332,46 @@ alias(mgq::qmath)
 {
 	%out = $0
 	%calc = $1
-	#Check if calculation for speed or filesize
-	if (%calc == "speed"){
-	if ($math.ceil(%out) <= 1048575){
-		%out = $str.printf("?.2f",$(%out/1024.0)) KiB/s
-		return %out
-		halt;
+	# Check if calculation for speed or filesize
+	if (%calc == "speed")
+	{
+		if ($math.ceil(%out) <= 1048575)
+		{
+			%out = $str.printf("?.2f",$(%out/1024.0)) KiB/s
+			return %out
+			halt;
 		}
-		%out = $str.printf("?.2f",$(%out/1024.0/1024.0)) MiB/s
-		}
-		if (%calc == "speed1"){
-		if ($math.ceil(%out) <= 1048575){
+		%out = $str.printf("?.2f", $(%out/1024.0/1024.0)) MiB/s
+	}
+
+	if (%calc == "speed1")
+	{
+		if ($math.ceil(%out) <= 1048575)
+		{
 			%out = $str.printf("?.f",$(%out/1024.0)) KiB/s
 			return %out
 			halt;
-			}
+		}
 		%out = $str.printf("?.f",$(%out/1024.0/1024.0)) MiB/s
+	}
+
+	if (%calc == "fsize")
+	{
+		if ($math.ceil(%out) <= 1048575)
+		{
+			%out = $str.printf("?.1f",$(%out/1024.0)) KiB
+			return %out
+			halt;
 		}
-	if (%calc == "fsize"){
-	if ($math.ceil(%out) <= 1048575){
-		%out = $str.printf("?.1f",$(%out/1024.0)) KiB
-		return %out
-		halt;
-		}
-	if ($math.ceil(%out) <= 1073741823){
-		%out = $str.printf("?.1f",$(%out/1024.0/1024.0)) MiB
-		return %out
-		halt;
+
+		if ($math.ceil(%out) <= 1073741823)
+		{
+			%out = $str.printf("?.1f",$(%out/1024.0/1024.0)) MiB
+			return %out
+			halt;
 		}
 		%out = $str.printf("?.2f",$(%out/1024.0/1024.0/1024.0)) GiB
-		}
+	}
 	return %out
 }
 
@@ -335,19 +379,22 @@ alias(mgq::qmath)
 alias(mgq::qrun)
 {
 	%cmd = $str.upcase($0)
-	if( %cmd == "ON"){
+	if( %cmd == "ON")
+	{
 		eventctl -e OnDCCFileTransferSuccess queueXDCC
 		eventctl -e OnDCCFileTransferFailed queueXDCC
 		eventctl -e OnDCCFileTransferBegin qdlcheck
-		%on = $k(9)"ON"$k 
-		echo -w=$active  -i = $msgtype(GenericStatus) "XDCC Queue Run Status:" %on 
+		%on = $k(9)"ON"$k
+		echo -w=$active  -i = $msgtype(GenericStatus) "XDCC Queue Run Status:" %on
 	}
-	if( %cmd == "OFF"){
+
+	if( %cmd == "OFF")
+	{
 		eventctl -d OnDCCFileTransferSuccess queueXDCC
 		eventctl -d OnDCCFileTransferFailed queueXDCC
 		eventctl -d OnDCCFileTransferBegin qdlcheck
-		%off = $k(4)"OFF"$k 
-		echo -w=$active -i = $msgtype(GenericStatus) "XDCC Queue Run Status:" %off 
+		%off = $k(4)"OFF"$k
+		echo -w=$active -i = $msgtype(GenericStatus) "XDCC Queue Run Status:" %off
 	}
 }
 
@@ -362,7 +409,7 @@ alias(mgq::qstats)
 	%divider = "==================================================="
 	%title = "		Queue Run Stats"
 	%timeline = " Start Time : " %QSTARTTIME  " End Time : " %QENDTIME
-	
+
 	# Compile info from Q-Run
 	%check = %QSDL[]#
 	for(%i=0;%i<%check;%i++)
@@ -372,6 +419,7 @@ alias(mgq::qstats)
 		%filesdownloaded++
 		%dlspeeds += %QSDLSpeeds[%i]
 	}
+
 	# Check for at least 1 valid download
 	if(%filesdownloaded >= 1)
 	{
@@ -381,7 +429,10 @@ alias(mgq::qstats)
 		%tdownloads = $mgq::qmath(%totalbytes,fsize)
 		%filesline = " Files Downloaded : " %filesdownloaded " Total Bytes : " %tdownloads
 		%speedline = " Average Speed : " %avgspeed
-	}else{ %filesline = " Sorry, no files downloaded successfully. ";}
+	}
+	else
+		%filesline = " Sorry, no files downloaded successfully. ";
+
 	echo -w=%W %divider
 	echo -w=%W %title
 	echo -w=%W %divider
@@ -390,8 +441,10 @@ alias(mgq::qstats)
 	echo -w=%W %speedline
 	echo -w=%W %divider
 	echo -w=%W $lf
+
 	unset %QSTARTTIME, %QENDTIME, %QSDL
 	unset %QSDLBytes, %QSDLSpeeds
+
 	%QAdmin = "OK"
 	$mgq::xdccq(clearq)
 }
@@ -400,24 +453,24 @@ alias(mgq::qstats)
 alias(mgq::stallchk)
 {
 	/*
-			Using newer function in KVIrc 4.9.2
-			We can check when current speed drops to zero.
-			This allows us to abort a stalled download.
-			*Added test for dl speed less than users set minimum
+		Using newer function in KVIrc 4.9.2
+		We can check when current speed drops to zero.
+		This allows us to abort a stalled download.
+		*Added test for dl speed less than users set minimum
 	*/
 	# Convert time to milliseconds
 	%checktime = $((3*60)*1000);
-	timer (chkstall,%checktime){
+	timer (chkstall,%checktime)
+	{
 		# Sort and remove any dupes.
 		%stcheck = $sort(%DLQID)
 		%x = %stcheck[]#
 		for(%y=0;%y<%x;%y++)
 		{
 			if(%stcheck[%y + 1] != %stcheck[%y])
-			{
 				%check <+ %stcheck[%y]
-			}
 		}
+
 		# Check if completed downloads have been cleared from transfer window
 		%checkcurrent = $sort($dcc.sessionList())
 		%count = %checkcurrent[]#
@@ -426,11 +479,10 @@ alias(mgq::stallchk)
 			foreach(%z, %check)
 			{
 				if(%checkcurrent[%x] == %z)
-				{
 					%checked <+ %checkcurrent[%x]
-				}
 			}
 		}
+
 		foreach(%i,%checked)
 		{
 			if($dcc.transferStatus(%i) == "transferring")
@@ -445,37 +497,41 @@ alias(mgq::stallchk)
 						# May just be waiting for connection to close
 						break;
 					}
+
 					if((%remotefsize > %transferred) && ($dcc.transferStatus(%i) == "transferring"))
 					{
-					foreach(%x,%GETTHIS)
-					{
-						if(%x != $null)
+						foreach(%x,%GETTHIS)
 						{
-							#if($dcc.remoteFilename(%i) == %MYQUEUE[%x])
-							if($str.contains($dcc.remoteFilename(%i), %MYQUEUE[%x]))
+							if(%x != $null)
 							{
-								%MYQSCHK[%x] = $(%MYQSCHK[%x] + 1)
-								if(%MYQSCHK[%x] == 3)
+								#if($dcc.remoteFilename(%i) == %MYQUEUE[%x])
+								if($str.contains($dcc.remoteFilename(%i), %MYQUEUE[%x]))
 								{
-									# We have a stalled download
-									%STALLED = $true
-									dcc.abort -q %i
-									break;
+									%MYQSCHK[%x] = $(%MYQSCHK[%x] + 1)
+									if(%MYQSCHK[%x] == 3)
+									{
+										# We have a stalled download
+										%STALLED = $true
+										dcc.abort -q %i
+										break;
+									}
 								}
 							}
-						 }
-					  }
-				   }
+						}
+					}
 			    }
+
 				if(%QMDLC == $true)
 				{
 					# Check for speeds below minimum setting.
 					%mspeed = $(102400 * %QMDLS)
 					if(($dcc.averageSpeed(%i) < %mspeed) && ($dcc.transferStatus(%i) == "transferring") && ($dcc.transferredBytes(%i) > 0) && ($dcc.currentSpeed(%i) != 0))
-					{	
+					{
 						%win = $window("[MG] XDCC Queue II Control Center")
 						%dspeed = $mgq::qmath(%mspeed, speed1)
+
 						echo -w=%win $k(7)"Download speed from:"$dcc.remoteNick(%i)" was below "%dspeed" ** Removed from queue **"$k
+
 						foreach(%l,%GETTHIS)
 						{
 							if($str.contains($dcc.remoteFileName(%i),%MYQUEUE[%l],0))
@@ -487,31 +543,29 @@ alias(mgq::stallchk)
 								%MYQTAG[%l] = $null
 								%MYQNICK[%l] = $null
 								%MYQSCHK[%i] = $null
-								
+
 								# Cleanup GETTHIS
 								%x = %GETTHIS[]#
 								for(%z=0;%z<%x;%z++)
 								{
 									if(%GETTHIS[%z] == %slowone)
-									{
 										%GETTHIS[%z] = $null
-									}	
 								}
+
 								# Cleanup DLQID
 								%y = %DLQID[]#
 								for(%x=0;%x<%y;%x++)
 								{
 									if(%DLQID[%x] == %i)
-									{
 										%DLQID[%x] = $null
-									}
-								}	
-							}	
+								}
+							}
 						}
 					}
 				}
 			}
 		}
+
 		# Cleanup when done
 		if($typeof(%GETTHIS) == "nothing")
 		{
@@ -519,144 +573,179 @@ alias(mgq::stallchk)
 			unset %QFnames
 			unset %ErrorCheck
 			timer -s (delay1, 5000)
-			if($isTimer(checkqdl)){killtimer checkqdl;}
-			if($isTimer(chkstall)){killtimer chkstall;}
-			if(!%QPAUSE){$mgq::xdccq(start);}
+
+			if($isTimer(checkqdl))
+				killtimer checkqdl;
+
+			if($isTimer(chkstall))
+				killtimer chkstall;
+
+			if(!%QPAUSE)
+				$mgq::xdccq(start);
 		}
-	 }
+	}
 }
 
 alias(mgq::xdccq)
 {
 	/*
-				Updated version using switch.
-				Deleted all manual cmds for loader
-				Since we now have a configuration panel.
-		*/
-			
-		%mycmd = $str.upcase($0)
-		if(%mycmd == "!S"){%mycmd = "SEARCH";}
-		if(%mycmd == "?"){%mycmd = "HELP";}
-		%mytag = $str.upcase($1)
-		%myfile = $2
-		#%QPAUSE = $false
-		%qcounter = 0
-		%MGQCC = "[MG] XDCC Queue II Control Center"
-		if(!$window.exists($window(%MGQCC)))
+		Updated version using switch.
+		Deleted all manual cmds for loader
+		Since we now have a configuration panel.
+	*/
+	%mycmd = $str.upcase($0)
+
+	if(%mycmd == "!S")
+		%mycmd = "SEARCH";
+
+	if(%mycmd == "?")
+		%mycmd = "HELP";
+
+	%mytag = $str.upcase($1)
+	%myfile = $2
+
+	#%QPAUSE = $false
+	%qcounter = 0
+	%MGQCC = "[MG] XDCC Queue II Control Center"
+	if(!$window.exists($window(%MGQCC)))
+	{
+		 $window.open("im", %MGQCC,$context, QQueue.png)
+		 echo -w=$window(%MGQCC)  -i=$msgtype(GenericStatus) " * Featuring a GUI Info Widget to open use [ F2 ] *"
+		 echo -w=$window(%MGQCC)  -i=$msgtype(GenericStatus) " * Featuring a GUI Queue Manager to open use [ F3 ] *"
+		 echo -w=$window(%MGQCC)  -i=$msgtype(GenericStatus) " * Featuring a GUI Configuration Widget to open use [ F7 ] *"
+	}
+
+	switch(%QBOT)
+	{
+		case("AS"):
 		{
-			 $window.open("im", %MGQCC,$context, QQueue.png)
-			 echo -w=$window(%MGQCC)  -i=$msgtype(GenericStatus) " * Featuring a GUI Info Widget to open use [ F2 ] *"
-			 echo -w=$window(%MGQCC)  -i=$msgtype(GenericStatus) " * Featuring a GUI Queue Manager to open use [ F3 ] *"
-			 echo -w=$window(%MGQCC)  -i=$msgtype(GenericStatus) " * Featuring a GUI Configuration Widget to open use [ F7 ] *"
+			%get = "!getas"
+			%gets = "!getsas"
+			%getp = "!getpas"
 		}
-			
-		switch(%QBOT){
-			case("AS"):
-			{
-				%get = "!getas"
-				%gets = "!getsas"
-				%getp = "!getpas"
-			}
-				break;
-			case("US"):
-			{
-				%get = "!getus"
-				%gets = "!getsus"
-				%getp = "!getpus"
-			}
-			break;
-			case("EU"):
-			{
-				%get = "!geteu"
-				%gets = "!getseu"
-				%getp = "!getpeu"
-			}
-			break;
-			default:
-			{
-				%get = "!get"
-				%gets = "!gets"
-				%getp = "!getp"
-			}
-			break;
+		break;
+		case("US"):
+		{
+			%get = "!getus"
+			%gets = "!getsus"
+			%getp = "!getpus"
 		}
-		# Check which OS running for sound play
-			
-			%soundfile = $file.globaldir/audio/jingle.wav
-			if($system.osname == "Windows"){ %soundfile = $file.globaldir\audio\\jingle.wav; }
-			
-		# Starting main commands here
-		if(%mycmd == "START"){
-				if(($typeof(%MYQUEUE) == "array") && (%QPAUSE == $true))
-				{	
-					%qreply = $k(9)"RESUMED"$k
-					echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Run Status:" %qreply
-					%QPAUSE = $false
-					if($typeof(%GETHIS) == "array"){halt;}
-				}
-				%count = %MYQUEUE[]#
-				if((%count == $null) && (!%QRUN))
+		break;
+		case("EU"):
+		{
+			%get = "!geteu"
+			%gets = "!getseu"
+			%getp = "!getpeu"
+		}
+		break;
+		default:
+		{
+			%get = "!get"
+			%gets = "!gets"
+			%getp = "!getp"
+		}
+		break;
+	}
+
+	# Check which OS running for sound play
+	%soundfile = $escape($file.globaldir(audio/jingle.wav);
+	#if($system.osname == "Windows")
+	#	%soundfile = $file.globaldir\audio\\jingle.wav;
+
+	# Starting main commands here
+	if(%mycmd == "START")
+	{
+		if(($typeof(%MYQUEUE) == "array") && (%QPAUSE == $true))
+		{
+			%qreply = $k(9)"RESUMED"$k
+			echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Run Status:" %qreply
+			%QPAUSE = $false
+
+			if($typeof(%GETHIS) == "array")
+				halt;
+		}
+
+		%count = %MYQUEUE[]#
+		if((%count == $null) && (!%QRUN))
+		{
+			%qanswer = $k(7)"EMPTY"$k
+			echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Status:" %qanswer
+			halt;
+		}
+
+		if((%count == $null) && (%QRUN))
+		{
+			echo -w=$window(%MGQCC)   -i=$msgtype(GenericStatus) " * * *  XDCC Queue is empty.  We're Done! * * * "
+			snd.play -q %soundfile
+
+			if(!%QENDTIME)
+				%QENDTIME = $date(H:M:S);
+
+			if(($objects.exists(%G_XQManager)) && (%G_XQManager->%lbQL->$count() == 0))
+			{
+				%G_XQManager->%btnRItem->$setEnabled(0)
+				%G_XQManager->%btnReset->$setEnabled(0)
+				%G_XQManager->%btnStart->$setEnabled(0)
+				%G_XQManager->%btnPause->$setEnabled(0)
+				%G_XQManager->%btnDelay->$setEnabled(0)
+			}
+
+			if($typeof(%QFails) == "array")
+			{
+				echo -w=$window(%MGQCC) $k(7) " - - - File(s) that failed to download and were removed from the queue - - - "$k
+				foreach(%y,%QFails)
 				{
-					%qanswer = $k(7)"EMPTY"$k
-					echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Status:" %qanswer
-					halt;
+					echo -w=$window(%MGQCC) $k(7) %y
 				}
-				if((%count == $null) && (%QRUN)){
-					echo -w=$window(%MGQCC)   -i=$msgtype(GenericStatus) " * * *  XDCC Queue is empty.  We're Done! * * * "
-					snd.play -q %soundfile
-					if(!%QENDTIME){%QENDTIME = $date(H:M:S);}
-					if(($objects.exists(%G_XQManager)) && (%G_XQManager->%lbQL->$count() == 0))
-					{
-						%G_XQManager->%btnRItem->$setEnabled(0)
-						%G_XQManager->%btnReset->$setEnabled(0)
-						%G_XQManager->%btnStart->$setEnabled(0)
-						%G_XQManager->%btnPause->$setEnabled(0)
-						%G_XQManager->%btnDelay->$setEnabled(0)
-					}
-					if($typeof(%QFails) == "array")
-					{
-						echo -w=$window(%MGQCC) $k(7) " - - - File(s) that failed to download and were removed from the queue - - - "$k 
-						foreach(%y,%QFails)
-						{
-							echo -w=$window(%MGQCC) $k(7) %y
-						}
-					}
-					
-					$mgq::qstats()
-					halt;
-					}
-				if(!$isEventEnabled(OnDCCFileTransferSuccess,queueXDCC)){$mgq::qrun(on);}
-				if((%count != $null) && (!%QRUN)){
-					echo -w=$window(%MGQCC)  -i=$msgtype(GenericStatus) " * * * Starting XDCC Queue Run * * * "
-					%QRUN = $true
-					if($objects.exists(%G_XQManager))
-					{
-						%G_XQManager->%btnReset->$setEnabled(1)
-						%G_XQManager->%btnPause->$setEnabled(1)
-						%G_XQManager->%btnStart->$setEnabled(0)
-						%G_XQManager->%btnDelay->$setEnabled(0)
-					}
-					snd.play -q %soundfile
-					if($isTimer(qdelay)){killtimer qdelay;}
-					}
-				
-				if(!%QSTARTTIME){%QSTARTTIME = $date(H:M:S);}
-				for(%i=0;%i<%count;%i++)
-				if(%MYQUEUE[%i] != $null){
-					%line = %get %MYQUEUE[%i]
-					%GETTHIS <+ %i
-					%QChecker <+ %i
-					%QFnames <+ %MYQUEUE[%i]
-					%numg = $(%qcounter + 1)
-					%numg = $k(9)"("%numg")"$k
-					
-					if(%MYQTAG[%i] == "S"){
-						%line = %gets %MYQUEUE[%i]
-					} else {
-						if(%MYQTAG[%i] == "P"){
-							%line = %getp %MYQUEUE[%i]
-						}
-					}
+			}
+
+			$mgq::qstats()
+			halt;
+		}
+
+		if(!$isEventEnabled(OnDCCFileTransferSuccess,queueXDCC))
+			$mgq::qrun(on);
+
+		if((%count != $null) && (!%QRUN))
+		{
+			echo -w=$window(%MGQCC)  -i=$msgtype(GenericStatus) " * * * Starting XDCC Queue Run * * * "
+			%QRUN = $true
+
+			if($objects.exists(%G_XQManager))
+			{
+				%G_XQManager->%btnReset->$setEnabled(1)
+				%G_XQManager->%btnPause->$setEnabled(1)
+				%G_XQManager->%btnStart->$setEnabled(0)
+				%G_XQManager->%btnDelay->$setEnabled(0)
+			}
+			snd.play -q %soundfile
+
+			if($isTimer(qdelay))
+				killtimer qdelay;
+		}
+
+		if(!%QSTARTTIME)
+			%QSTARTTIME = $date(H:M:S);
+
+		for(%i=0;%i<%count;%i++)
+		{
+			if(%MYQUEUE[%i] != $null)
+			{
+				%line = %get %MYQUEUE[%i]
+				%GETTHIS <+ %i
+				%QChecker <+ %i
+				%QFnames <+ %MYQUEUE[%i]
+				%numg = $(%qcounter + 1)
+				%numg = $k(9)"("%numg")"$k
+
+				if(%MYQTAG[%i] == "S")
+					%line = %gets %MYQUEUE[%i]
+				else
+				{
+					if(%MYQTAG[%i] == "P")
+						%line = %getp %MYQUEUE[%i]
+				}
+
 				# Handle QManager Listbox
 				if($objects.exists(%G_XQManager))
 				{
@@ -668,7 +757,7 @@ alias(mgq::xdccq)
 						{
 							%G_XQManager->%lbQL->$removeItem(%x);
 							break;
-						}	
+						}
 					}
 					if(%G_XQManager->%lbQL->$count() == 0)
 					{
@@ -679,13 +768,15 @@ alias(mgq::xdccq)
 						%G_XQManager->%btnDelay->$setEnabled(0)
 					}
 				}
-				# Check if sendfile mode is enabled - also temporary fix for PASSIVE Bots 
-				if((%QDLM) || ((!%BR) && (%MYQTAG[%i] == "P"))){
+
+				# Check if sendfile mode is enabled - also temporary fix for PASSIVE Bots
+				if((%QDLM) || ((!%BR) && (%MYQTAG[%i] == "P")))
+				{
 					%gfcmd = "xdcc sendfile"
-					if(%QSSL){
-					   if(($str.contains(%MYQNICK[%i],"|S|")) || ($str.contains(%MYQNICK[%i],"-Request|")) || ($str.contains(%MYQNICK[%i],"-REQ|"))){
-						  %gfcmd = "xdcc ssendfile"
-						}  
+					if(%QSSL)
+					{
+						if(($str.contains(%MYQNICK[%i],"|S|")) || ($str.contains(%MYQNICK[%i],"-Request|")) || ($str.contains(%MYQNICK[%i],"-REQ|")))
+							%gfcmd = "xdcc ssendfile"
 					}
 					%getfile = %MYQNICK[%i] %gfcmd %MYQUEUE[%i]*
 					echo -w=$window(%MGQCC) %numg Getting : %MYQUEUE[%i] from %MYQNICK[%i]
@@ -693,238 +784,239 @@ alias(mgq::xdccq)
 					foreach(%ir,$context.list){if ($channel(#moviegods,%ir) > 0)say -x -r=$channel(#moviegods,%ir) /msg %getfile;}
 					%qcounter++
 					if((%qcounter == %MaxDL) || (%i == $(%count - 1)))
-						{
-							%qcounter = 0
-							# Starting timer goes here..
-							$mgq::dlQChecker()
-							$mgq::stallchk()
-							halt;
-						}
+					{
+						%qcounter = 0
+						# Starting timer goes here..
+						$mgq::dlQChecker()
+						$mgq::stallchk()
+						halt;
 					}
+				}
 				# If not using sendfile go with !get*
-				if(!%QDLM){
+				if(!%QDLM)
+				{
 					echo -w=$window(%MGQCC) %numg Getting : %MYQUEUE[%i]
 					%MYQLB[%i] = $null
 					foreach(%ir,$context.list){if ($channel(#mg-chat,%ir) > 0)say -x -r=$channel(#mg-chat,%ir) %line;}
 					%qcounter++
 					if((%qcounter == %MaxDL) || (%i == $(%count - 1)))
-						{
-							%qcounter = 0
-							# Starting timer goes here..
-							$mgq::dlQChecker()
-							$mgq::stallchk()
-							halt;
-						}
+					{
+						%qcounter = 0
+						# Starting timer goes here..
+						$mgq::dlQChecker()
+						$mgq::stallchk()
+						halt;
 					}
+				}
 			}
 		}
-		switch(%mycmd)
+	}
+	switch(%mycmd)
+	{
+		# Display the cheatsheet but allow once
+		case("CHEATS"):
 		{
-			# Display the cheatsheet but allow once
-			case("CHEATS"):
+			if(!$objects.exists(%G_XQInfo))
 			{
-				if(!$objects.exists(%G_XQInfo))
-				{
-					%G_XQInfo = $new(mgq::qinfo)
-					%G_XQInfo->$show()
-				}
-				else
-				{
-					%G_XQInfo->$hide()
-					%G_XQInfo->$show()
-				}
-			break;
+				%G_XQInfo = $new(mgq::qinfo)
+				%G_XQInfo->$show()
 			}
-			# Set a delayed time to start Q-Run or cancel if already set
-			case("DELAY"):
+			else
 			{
-				# Set Q-Run to start at later time
-				if($length(%MYQUEUE) == $null)
-				{
-					echo -w=$active -i=$msgtype(GenericStatus) "Please add files to the queue first."
-					halt;
-				}
-				if($isTimer(qdelay))
-				{
-					killtimer qdelay
-					echo -w=$active -i=$msgtype(GenericStatus) "Delayed start time has been cancelled."
-					if($objects.exists(%G_XQManager))
-					{
-						%G_XQManager->%btnDelay->$setImage("QSDelay.png")
-						if((!%QRUN) || (!%QPAUSE))
-						{
-							%G_XQManager->%btnReset->$setEnabled(1)
-							%G_XQManager->%btnStart->$setEnabled(1)
-							%G_XQManager->%btnPause->$setEnabled(0)
-						}
-					}
-					halt;
-				}
-				if($objects.exists(%G_XQDelay))
-				{
-					%G_XQDelay->$show()
-				}
-				else
-				{
-					%G_XQDelay = $new(mgq::qdelay)
-					%G_XQDelay->$show()
-				}
-				
-			break;
+				%G_XQInfo->$hide()
+				%G_XQInfo->$show()
 			}
-			# Queue Manager for listing, removing and resetting the queue
-			case("QMNGR"):
-			{
-				%channel_check = $new(mgq::qcheckValid)
-				%valid_channels = %channel_check->$chkValid()
-				if(%valid_channels == $false)
-				{
-					echo -w=$active  -i=$msgtype(GenericWarning) "Please join both #mg-chat and #moviegods channels."
-					halt;
-				}
-				else
-				{
-					unset %channel_check
-				}
-				# Only allow one instance of this widget
-				if(!$objects.exists(%G_XQManager))
-				{
-					%G_XQManager = $new(mgq::qmngr)
-					%G_XQManager->$show()
-				}
-				else
-				{
-					%G_XQManager->$hide()
-					%G_XQManager->$show()
-				}
-			break;
-			}
-			# Get users search parameters
-			case("SEARCH"):
-			{
-				%channel_check = $new(mgq::qcheckValid)
-				%valid_channels = %channel_check->$chkValid()
-				if(%valid_channels == $false)
-				{
-					echo -w=$active  -i=$msgtype(GenericWarning) "Please join both #mg-chat and #moviegods channels."
-					halt;
-				}
-				else
-				{
-					unset %channel_check
-				}
-				if(!$isEventEnabled(OnQueryNotice,botQLoader))
-				{
-					echo -w=$active  -i=$msgtype(GenericStatus) "XDCC Queue Loader must be "$b"Enabled"$b" first!"
-					halt;
-				}
-				if(!$objects.exists(%G_XQSearch))
-				{
-					%G_XQSearch = $new(mgq::qsearch)
-					%G_XQSearch->$show()
-				}
-				else
-				{
-					%G_XQSearch->$hide()
-					%G_XQSearch->$show()
-				}
-			break;
-			}
-	
-			# Toggle the QLoader ON or OFF
-			case("QLOADER"):
-			{
-				# Toggle the QLoader ON or OFF
-					if(!$isEventEnabled(OnQueryNotice,botQLoader))
-					{
-						eventctl -e OnQueryNotice botQLoader
-						if($objects.exists(%G_XQManager))
-						{
-							%G_XQManager->%btnQLoader->$setText(" &Turn QLoader OFF")
-							%G_XQManager->%btnQLoader->$setImage("QLOFF.png")
-							%G_XQManager->%btnSearch->$setEnabled(1)
-		
-						}
-						%on = $k(9)"ON"$k 
-						echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Loader Status:" %on 
-						break;
-					}
-					if($isEventEnabled(OnQueryNotice,botQLoader))
-					{
-						eventctl -d OnQueryNotice botQLoader
-						if($objects.exists(%G_XQManager))
-						{
-							%G_XQManager->%btnQLoader->$setText(" &Turn QLoader ON")
-							%G_XQManager->%btnQLoader->$setImage("QLON.png")
-							%G_XQManager->%btnSearch->$setEnabled(0)
-						}
-						%off = $k(4)"OFF"$k 
-						echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Loader Status:" %off
-						break;
-					}
-			break;
-			}
-			
-			# Reset and clear all queued entries
-			case("CLEARQ"):
-			{
-				if(!$isSet(%QAdmin))
-				{
-					echo -w=$active -i=$msgtype(GenericStatus) "Undefined command - < "$b$k(7)$str.upcase($0)$b$k" > - Please check "$b"QInfo"$b" for available user commands."
-					halt;
-				}
-				unset %MYQUEUE, %MYQTAG, %MYQNICK, %MYQSCHK, %ErrorCheck
-				unset %GETTHIS, %QChecker, %QFails, %DLQID, %QFnames, %LBQCheck, %BRQueue, %MYQLB
-				unset %ErrorCheck, %BotQueued, %QAdmin
-				if($objects.exists(%G_XQManager)){%G_XQManager->%btnSetup->$setEnabled(1);}
-				if($isTimer(qdelay)){killtimer qdelay;}
-				%QRUN = $false
-				%BR = $false
-				%qreply  = $k(7)"RESET"$k
-				echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Status:" %qreply
-				$mgq::qrun(off)
-				break;
-			}
-			case("UNINSTALL"):
-			{
-				if(!$objects.exists(%G_UserConfirm))
-				{
-					%G_UserConfirm = $new(mgq::qremove)
-					%G_UserConfirm->$show()
-				}
-				else
-				{
-					%G_UserConfirm->$hide()
-					%G_UserConfirm->$show()
-				}
-			break;
-			}
-			case("SETUP"):
-			{
-				# Only allow one instance of this widget
-				if($typeof(%MYQUEUE) != "nothing")
-				{
-					echo -w=$active -i = $msgtype(GenericWarning) "Sorry, configuration must be done before adding files to the queue."
-					halt;
-				}
-				if(!$objects.exists(%G_XQConfig))
-				{
-					%G_XQConfig = $new(mgq::qsetup)
-					%G_XQConfig->$show()
-				}
-				else
-				{
-					%G_XQConfig->$hide()
-					%G_XQConfig->$show()
-				}
-			break;
-			}
-		
-			# Not a vaild command
-			default:
-				echo -w=$active -i=$msgtype(GenericStatus) "Undefined command - < "$b$k(7)$str.upcase($0)$b$k" > - Please check "$b"QInfo"$b" for available user commands."
-				break;
+		break;
 		}
+		# Set a delayed time to start Q-Run or cancel if already set
+		case("DELAY"):
+		{
+			# Set Q-Run to start at later time
+			if($length(%MYQUEUE) == $null)
+			{
+				echo -w=$active -i=$msgtype(GenericStatus) "Please add files to the queue first."
+				halt;
+			}
+			if($isTimer(qdelay))
+			{
+				killtimer qdelay
+				echo -w=$active -i=$msgtype(GenericStatus) "Delayed start time has been cancelled."
+				if($objects.exists(%G_XQManager))
+				{
+					%G_XQManager->%btnDelay->$setImage("QSDelay.png")
+					if((!%QRUN) || (!%QPAUSE))
+					{
+						%G_XQManager->%btnReset->$setEnabled(1)
+						%G_XQManager->%btnStart->$setEnabled(1)
+						%G_XQManager->%btnPause->$setEnabled(0)
+					}
+				}
+				halt;
+			}
+			if($objects.exists(%G_XQDelay))
+			{
+				%G_XQDelay->$show()
+			}
+			else
+			{
+				%G_XQDelay = $new(mgq::qdelay)
+				%G_XQDelay->$show()
+			}
+			break;
+		}
+		# Queue Manager for listing, removing and resetting the queue
+		case("QMNGR"):
+		{
+			%channel_check = $new(mgq::qcheckValid)
+			%valid_channels = %channel_check->$chkValid()
+			if(%valid_channels == $false)
+			{
+				echo -w=$active  -i=$msgtype(GenericWarning) "Please join both #mg-chat and #moviegods channels."
+				halt;
+			}
+			else
+			{
+				unset %channel_check
+			}
+			# Only allow one instance of this widget
+			if(!$objects.exists(%G_XQManager))
+			{
+				%G_XQManager = $new(mgq::qmngr)
+				%G_XQManager->$show()
+			}
+			else
+			{
+				%G_XQManager->$hide()
+				%G_XQManager->$show()
+			}
+			break;
+		}
+		# Get users search parameters
+		case("SEARCH"):
+		{
+			%channel_check = $new(mgq::qcheckValid)
+			%valid_channels = %channel_check->$chkValid()
+			if(%valid_channels == $false)
+			{
+				echo -w=$active  -i=$msgtype(GenericWarning) "Please join both #mg-chat and #moviegods channels."
+				halt;
+			}
+			else
+			{
+				unset %channel_check
+			}
+			if(!$isEventEnabled(OnQueryNotice,botQLoader))
+			{
+				echo -w=$active  -i=$msgtype(GenericStatus) "XDCC Queue Loader must be "$b"Enabled"$b" first!"
+				halt;
+			}
+			if(!$objects.exists(%G_XQSearch))
+			{
+				%G_XQSearch = $new(mgq::qsearch)
+				%G_XQSearch->$show()
+			}
+			else
+			{
+				%G_XQSearch->$hide()
+				%G_XQSearch->$show()
+			}
+			break;
+		}
+		# Toggle the QLoader ON or OFF
+		case("QLOADER"):
+		{
+			# Toggle the QLoader ON or OFF
+			if(!$isEventEnabled(OnQueryNotice,botQLoader))
+			{
+				eventctl -e OnQueryNotice botQLoader
+				if($objects.exists(%G_XQManager))
+				{
+					%G_XQManager->%btnQLoader->$setText(" &Turn QLoader OFF")
+					%G_XQManager->%btnQLoader->$setImage("QLOFF.png")
+					%G_XQManager->%btnSearch->$setEnabled(1)
+				}
+				%on = $k(9)"ON"$k
+				echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Loader Status:" %on
+				break;
+			}
+			if($isEventEnabled(OnQueryNotice,botQLoader))
+			{
+				eventctl -d OnQueryNotice botQLoader
+				if($objects.exists(%G_XQManager))
+				{
+					%G_XQManager->%btnQLoader->$setText(" &Turn QLoader ON")
+					%G_XQManager->%btnQLoader->$setImage("QLON.png")
+					%G_XQManager->%btnSearch->$setEnabled(0)
+				}
+				%off = $k(4)"OFF"$k
+				echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Loader Status:" %off
+				break;
+			}
+			break;
+		}
+		# Reset and clear all queued entries
+		case("CLEARQ"):
+		{
+			if(!$isSet(%QAdmin))
+			{
+				echo -w=$active -i=$msgtype(GenericStatus) "Undefined command - < "$b$k(7)$str.upcase($0)$b$k" > - Please check "$b"QInfo"$b" for available user commands."
+				halt;
+			}
+			unset %MYQUEUE, %MYQTAG, %MYQNICK, %MYQSCHK, %ErrorCheck
+			unset %GETTHIS, %QChecker, %QFails, %DLQID, %QFnames, %LBQCheck, %BRQueue, %MYQLB
+			unset %ErrorCheck, %BotQueued, %QAdmin
+
+			if($objects.exists(%G_XQManager))
+				%G_XQManager->%btnSetup->$setEnabled(1);
+
+			if($isTimer(qdelay))
+				killtimer qdelay;
+
+			%QRUN = $false
+			%BR = $false
+			%qreply  = $k(7)"RESET"$k
+
+			echo -w=$window(%MGQCC) -i=$msgtype(GenericStatus) "XDCC Queue Status:" %qreply
+			$mgq::qrun(off)
+			break;
+		}
+		case("UNINSTALL"):
+		{
+			if(!$objects.exists(%G_UserConfirm))
+			{
+				%G_UserConfirm = $new(mgq::qremove)
+				%G_UserConfirm->$show()
+			}
+			else
+			{
+				%G_UserConfirm->$hide()
+				%G_UserConfirm->$show()
+			}
+			break;
+		}
+		case("SETUP"):
+		{
+			# Only allow one instance of this widget
+			if($typeof(%MYQUEUE) != "nothing")
+			{
+				echo -w=$active -i = $msgtype(GenericWarning) "Sorry, configuration must be done before adding files to the queue."
+				halt;
+			}
+			if(!$objects.exists(%G_XQConfig))
+			{
+				%G_XQConfig = $new(mgq::qsetup)
+				%G_XQConfig->$show()
+			}
+			else
+			{
+				%G_XQConfig->$hide()
+				%G_XQConfig->$show()
+			}
+			break;
+		}
+		# Not a vaild command
+		default:
+			echo -w=$active -i=$msgtype(GenericStatus) "Undefined command - < "$b$k(7)$str.upcase($0)$b$k" > - Please check "$b"QInfo"$b" for available user commands."
+		break;
+	}
 }
-
-

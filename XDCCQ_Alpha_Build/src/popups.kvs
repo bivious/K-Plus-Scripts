@@ -4,8 +4,8 @@ defpopup(XDCCQ.menu)
 	{
 		%:Qenabled = $isEventEnabled(OnQueryNotice,botQLoader)
 		%:Qstatus = $false
-		if($typeof(%MYQUEUE) == "array"){%:Qstatus = $true;}
-	
+		if($typeof(%MYQUEUE) == "array")
+			%:Qstatus = $true;
 	}
 	
 	item(XDCC Queue Info,QInfo.png) (!%:IDisplayed)
@@ -39,7 +39,7 @@ defpopup(XDCCQ.menu)
 				%G_XQManager->%btnSearch->$setEnabled(0)
 			}
 		}
-		
+
 		item(Turn QLoader ON,QLON.png) (!%:Qenabled)
 		{
 			eventctl -e OnQueryNotice botQLoader
@@ -64,14 +64,13 @@ defpopup(XDCCQ.menu)
 		}
 	}
 	
-		separator
+	separator
 	
 	item(Uninstall This Script,QErase.png)
 	{
 		mgq::xdccq uninstall
 	}
 }
-
 popup.delitem -q channeltextview XDCCQ.separator0
 popup.addSeparator channeltextview XDCCQ.separator0
 popup.delitem -q channeltextview XDCCQ.menu

@@ -9,7 +9,7 @@ class("mgq::qsetup","widget")
 		%MaxDL = $4
 		%QMDLC = $5
 		%QMDLS = $6
-		 
+
 		%xdccqcfg = $config.open(XDCCQ.kvc)
 		config.write %xdccqcfg SSL $0
 		config.write %xdccqcfg REGION $3
@@ -21,7 +21,7 @@ class("mgq::qsetup","widget")
 		config.close %xdccqcfg
 		return $true
 	}
-	
+
 	function setupLoad()
 	{
 		@%xdccqcfg = $config.open(XDCCQ.kvc)
@@ -34,14 +34,11 @@ class("mgq::qsetup","widget")
 		@%cfg_mdlc = $config.read(@%xdccqcfg,QMDLC)
 		config.close @%xdccqcfg
 		@%cbssl_index = @%cfg_ssl
+
 		if(@%cfg_dlm == 1)
-		{
 			@%cbdlm_index = 0
-		}
 		else
-		{
 			@%cbdlm_index = 1
-		}
 		@%cbmdlc_index = @%cfg_mdlc
 		@%cbmdl_index = $(@%cfg_mdl - 1)
 		@%dlspd = $integer($(100 * @%cfg_mdls))
@@ -61,7 +58,7 @@ class("mgq::qsetup","widget")
 			{
 				@%cbpas_index = 2
 			}
-		break;
+			break;
 		}
 		switch(@%cfg_bot)
 		{
@@ -84,11 +81,11 @@ class("mgq::qsetup","widget")
 			{
 				@%cbbot_index = 3
 			}
-		break;
+			break;
 		}
 		return $true
 	}
-	
+
 	function destructor()
 	{
 		privateimpl($$, closeEvent)
@@ -97,7 +94,7 @@ class("mgq::qsetup","widget")
 			Delete $$
 		}
 	}
-	
+
 	function constructor()
 	{
 		@%version = "1.1.0"
@@ -107,7 +104,7 @@ class("mgq::qsetup","widget")
 		@%layout = $new(layout, $$)
 		@%layout->$setSpacing(3)
 		@$setGeometry(0,0,800,400)
-		@$setWindowTitle("MG-XDCC Queue II - Configuration v @%version")
+		@$setWindowTitle("MG-XDCC Queue II - Configuration v@%version")
 		@$setWFlags(dialog)
 		@$centerToScreen()
 		@$setFocus()
@@ -135,36 +132,30 @@ class("mgq::qsetup","widget")
 		@%chkbssl = $new(checkbox, @%gb_ssl)
 		@%chkbssl->$setChecked(@%cbssl_index)
 		@%chkbssl->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - SSL Support:</p><p><pre><b>Checked</b>   Toggle SSL-DCC support <b>ON</b> (Default)\n<b>Unchecked</b> Toggle SSL-DCC support <b>OFF</b></pre></p>")
+
 		if(@%cbssl_index == 1)
-		{
 			@%chkbssl->$setText(" SSL-DCC Support : ON")
-		}
 		else
-		{
 			@%chkbssl->$setText(" SSL-DCC Support : OFF")
-		}
+
 		@%chkbdlm = $new(checkbox, @%gb_dlm)
 		@%chkbdlm->$setChecked(@%cbdlm_index)
 		@%chkbdlm->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - DL Mode:</p><p><pre><b>Checked</b>   Switch DL Mode to <b>GET</b> (Default)\n<b>Unchecked</b> Switch DL Mode to <b>SENDFILE</b></pre></p>")
+
 		if(@%cbdlm_index == 1)
-		{
 			@%chkbdlm->$setText(" DL Mode Setting : GET")
-		}
 		else
-		{
 			@%chkbdlm->$setText(" DL Mode Setting : SENDFILE")
-		}
+
 		@%chkbmdlsc = $new(checkbox, @%gb_mdlc)
 		@%chkbmdlsc->$setChecked(@%cbmdlc_index)
 		@%chkbmdlsc->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Min. DL Speed Control:</p><p><pre><b>Checked</b>   Toggle Min. DL Speed Control <b>ON</b> (Default)\n<b>Unchecked</b> Toggle Min. DL Speed Control <b>OFF</b></pre></p>")
+
 		if(@%cbmdlc_index == 1)
-		{
 			@%chkbmdlsc->$setText(" Min. DL Speed : ON")
-		}
 		else
-		{
 			@%chkbmdlsc->$setText(" Min. DL Speed : OFF")
-		}
+
 		@%combopass = $new(combobox, @%gb_pass)
 		@%combopass->$insertitem("Use Passive Bots Only")
 		@%combopass->$insertitem("Enable Passive Bots")
@@ -192,10 +183,10 @@ class("mgq::qsetup","widget")
 		@%sbmdlspd->$setValue(@%dlspd)
 		@%sbmdlspd->$setSuffix("  KiB/s - Min.DL Speed")
 		@%sbmdlspd->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;Select Speed - Range 25-500 KiB/s in 25 KiB/s steps</p><p><pre>Set Q-Run minimum download speed.\nIf a download drops below the minimum speed set than\nit will be remove from the queue but continue to download.")
+
 		if(@%cfg_mdlc == 0)
-		{
 			@%sbmdlspd->$hide()
-		}
+
 		@%btnSave = $new(button, @%gb_action)
 		@%btnSave->$settext("      &Apply ")
 		@%btnSave->$setImage("QOK.png")
@@ -204,7 +195,7 @@ class("mgq::qsetup","widget")
 		@%btnCancel->$settext("      &Cancel ")
 		@%btnCancel->$setImage("QCancel.png")
 		@%btnCancel->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;Cancel Setting Changes:</p><p><pre>Cancel Changes and Close Configuration.</pre></p>")
-				
+
 		@%layout->$addMultiCellWidget(@%gb_ssl, 0,0,0,0)
 		@%layout->$addMultiCellWidget(@%gb_pass, 0,0,1,1)
 		@%layout->$addMultiCellWidget(@%gb_dlm, 1,1,0,0)
@@ -212,7 +203,7 @@ class("mgq::qsetup","widget")
 		@%layout->$addMultiCellWidget(@%gb_mdlc, 3,3,0,0)
 		@%layout->$addMultiCellWidget(@%gb_mdl, 3,3,1,1)
 		@%layout->$addMultiCellWidget(@%gb_action, 4,4,0,1)
-		
+
 		privateimpl(@%chkbssl, setssl)
 		{
 			%state = @$parent->$parent->%chkbssl->$isChecked()
@@ -270,10 +261,9 @@ class("mgq::qsetup","widget")
 			}
 		}
 		objects.connect @%sbmdlspd valueChanged @%sbmdlspd checkvalid
-		
+
 		privateimpl(@%btnSave, mousePressEvent)
 		{
-			
 			%indexssl = @$parent->$parent->%chkbssl->$isChecked()
 			%indexdlm = @$parent->$parent->%chkbdlm->$isChecked()
 			%indexmdlsc = @$parent->$parent->%chkbmdlsc->$isChecked()
@@ -282,11 +272,17 @@ class("mgq::qsetup","widget")
 			%indexdlt = @$parent->$parent->%combomdl->$currentItem()
 			%dlspd = @$parent->$parent->%sbmdlspd->$value()
 			%cfg_ssl = $true
-			if(%indexssl == 0){%cfg_ssl = $false;}
+
+			if(%indexssl == 0)
+				%cfg_ssl = $false;
+
 			%donoff = $array("OFF","ON")
 			%displayssl = %donoff[%indexssl]
 			%cfg_dlm = $false
-			if(%indexdlm == 0){%cfg_dlm = $true;}
+
+			if(%indexdlm == 0)
+				%cfg_dlm = $true;
+
 			%ddlm = $array("SENDFILE","GET")
 			%displaydlm = %ddlm[%indexdlm]
 			%passive = $array("f","e","n")
@@ -300,22 +296,25 @@ class("mgq::qsetup","widget")
 			%cfg_mdlc = %indexmdlsc
 			%displaymdlc = %donoff[%indexmdlsc]
 			%cfg_mdls =  $str.printf("?.2f",$(%dlspd * .01))
+
 			echo -w=$active $k(7)"Saving your selection as follows:"$k
 			echo -w=$active -i=$msgtype(GenericStatus) "SSL-DCC Support :" $b%displayssl$b
 			echo -w=$active -i=$msgtype(GenericStatus) "DL Mode :" $b%displaydlm$b
+
 			if(%cfg_mdlc == 0)
-			{
 				echo -w=$active -i=$msgtype(GenericStatus) "Min. DL Speed :" $b%displaymdlc$b
-			}
+
 			else
-			{
 				echo -w=$active -i=$msgtype(GenericStatus) "Min. DL Speed :" $b%dlspd "KiB/s"$b
-			}
+
 			echo -w=$active -i=$msgtype(GenericStatus) "Passive Bots :" $b%displaypas$b
 			echo -w=$active -i=$msgtype(GenericStatus) "Regional Bots :" $b%cfg_bot$b
 			echo -w=$active -i=$msgtype(GenericStatus) "Trigger Downloads :" $b%cfg_mdl$b
+
 			@$parent->$parent->$setupSave(%cfg_ssl,%cfg_dlm,%cfg_pas,%cfg_bot,%cfg_mdl,%cfg_mdlc,%cfg_mdls)
+
 			echo -w=$active $k(7)"Setting have been saved."$k
+
 			delete @$parent->$parent
 		}
 		privateimpl(@%btnCancel, ClickEvent)
@@ -325,7 +324,6 @@ class("mgq::qsetup","widget")
 		}
 		objects.connect  @%btnCancel ClickEvent $$ CloseEvent
 	}
-	
 }
 
 class("mgq::qsearch","widget")
@@ -337,44 +335,52 @@ class("mgq::qsearch","widget")
 			Delete $$
 		}
 	}
-	
+
 	function constructor()
 	{
 		@%version = "1.1.0"
 		@%layout = $new(layout, $$)
 		@$setGeometry(0,0,500,300)
-		@$setWindowTitle("MG-XDCC Queue II - File Search v @%version")
+		@$setWindowTitle("MG-XDCC Queue II - File Search v@%version")
 		@$setBackgroundColor(#a9a9a9)
 		@$setWFlags(dialog)
 		@$centerToScreen()
 		@$setFocus()
 		@%layout = $new(layout, $$)
 		@%layout->$setSpacing(10)
+
 		@%lblInfoMsg = $new(label, $$)
 		@%lblInfoMsg->$setText("Enter Search Parameters.<br/><br/>May include exclusions.<br/><br/>Or use Reqular Expression searches.")
 		@%lblInfoMsg->$setMargin(5)
 		@%lblInfoMsg->$setFrameStyle(WinPanel, Raised)
 		@%lblInfoMsg->$setAlignment(HCenter,VCenter)
+
 		@%leSB = $new(lineedit, $$)
 		@%leSB->$setText("Click Here...")
 		@%leSB->$setTooltip(""<p style="background-color:#000000;color:white">&nbsp;&nbsp;Search Parameters:</p><p><pre>May include exclusions.\nExample: -720p\,ger filename.</pre></p>"")
+
 		@%chkbRegex = $new(checkbox, $$)
 		@%chkbRegex->$setText("Enable REGEX Searches")
 		@%chkbRegex->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;&nbsp;Search Function:</p><p><pre><b>Check</b> to <b>Enable</b> Regular Expression searches.</pre></p>")
+
 		@%grpAction = $new(groupbox, $$)
 		@%grpAction->$setOrientation("Horizontal")
+
 		@%btnSearch = $new(button, @%grpAction)
 		@%btnSearch->$setText(" &OK")
 		@%btnSearch->$setImage("QOK.png")
 		@%btnSearch->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;&nbsp;Search Function: </p>Execute the search")
+
 		@%btnCancel = $new(button, @%grpAction)
 		@%btnCancel->$setText(" &Cancel")
 		@%btnCancel->$setImage("QCancel.png")
 		@%btnCancel->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;&nbsp;Search Function: </p>Cancel the search")
+
 		@%layout->$addMultiCellWidget(@%lblInfoMsg, 0,0,0,0)
 		@%layout->$addMultiCellWidget(@%leSB, 1,1,0,0)
 		@%layout->$addMultiCellWidget(@%chkbRegex, 2,2,0,0)
 		@%layout->$addMultiCellWidget(@%grpAction, 3,3,0,0)
+
 		privateimpl(@%leSB, mousePressEvent)
 		{
 			if (@$text() == "Click Here..." || @$text() == "")
@@ -410,7 +416,6 @@ class("mgq::qsearch","widget")
 			delete @$parent->$parent
 		}
 	}
-	
 }
 
 class("mgq::qreset","widget")
@@ -422,7 +427,7 @@ class("mgq::qreset","widget")
 			Delete $$
 		}
 	}
-	
+
 	function constructor($0 -command operation)
 	{
 		@%version = "1.1.0"
@@ -435,23 +440,28 @@ class("mgq::qreset","widget")
 		@$setFocus()
 		@%layout = $new(layout, $$)
 		@%layout->$setSpacing(10)
+
 		@%lblInfoMsg = $new(label, $$)
 		@%lblInfoMsg->$setText("You are about to remove all <b>queued files</b>.<br/><br/>Do you wish to proceed at this time?")
 		@%lblInfoMsg->$setMargin(5)
 		@%lblInfoMsg->$setFrameStyle(WinPanel, Raised)
 		@%lblInfoMsg->$setAlignment(HCenter,VCenter)
+
 		@%layout->$addMultiCellWidget(@%lblInfoMsg, 0,0,0,1)
+
 		@%btnYes = $new(button,$$)
 		@%btnYes->$setText(" Yes, Proceed")
 		@%btnYes->$setImage("QOK.png")
 		@%btnYes->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Reset Queue:</p><p><pre><b>Click</b> to remove all queued files.")
+
 		@%btnNO = $new(button, $$)
 		@%btnNO->$setText(" No, Abort")
 		@%btnNo->$setImage("QCancel.png")
 		@%btnNo->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Reset Queue:</p><p><pre><b>Click</b> to Abort Resetting the queue.")
+
 		@%layout->$addWidget(@%btnYes, 1,0)
 		@%layout->$addWidget(@%btnNo, 1,1)
-		
+
 		privateimpl(@%btnYes, ClickEvent)
 		{
 			if(%QRUN == $true)
@@ -487,11 +497,11 @@ class("mgq::qreset","widget")
 				%G_XQManager->%btnPause->$setEnabled(0)
 				%G_XQManager->%btnDelay->$setEnabled(0)
 				%G_XQManager->%btnSetup->$setEnabled(1)
-				echo -w=$active -i=$msgtype(GenericStatus) $b"RESET - Operation Completed!"$b 
+				echo -w=$active -i=$msgtype(GenericStatus) $b"RESET - Operation Completed!"$b
 				%QAdmin = "OK"
 				$mgq::xdccq(clearq)
-			}		
-			
+			}
+
 			delete @$parent
 		}
 		privateimpl(@%btnNo, ClickEvent)
@@ -500,7 +510,6 @@ class("mgq::qreset","widget")
 			delete @$parent
 		}
 	}
-	
 }
 
 class("mgq::qremove","widget")
@@ -512,7 +521,7 @@ class("mgq::qremove","widget")
 			Delete $$
 		}
 	}
-	
+
 	function constructor( Query User to confirm removing AddOn)
 	{
 		@%version = "1.1.0"
@@ -525,23 +534,28 @@ class("mgq::qremove","widget")
 		@$setFocus()
 		@%layout = $new(layout, $$)
 		@%layout->$setSpacing(10)
+
 		@%lblInfoMsg = $new(label, $$)
 		@%lblInfoMsg->$setText("You are about to remove <b>MG-XDCC Queue II AddOn</b> from your system.<br/><br/>Do you wish to proceed at this time?")
 		@%lblInfoMsg->$setMargin(5)
 		@%lblInfoMsg->$setFrameStyle(WinPanel, Raised)
 		@%lblInfoMsg->$setAlignment(HCenter,VCenter)
+
 		@%layout->$addMultiCellWidget(@%lblInfoMsg, 0,0,0,1)
+
 		@%btnYes = $new(button,$$)
 		@%btnYes->$setText(" Yes, Proceed")
 		@%btnYes->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Manage this Addon:</p><p><pre><b>Click</b> to open the Manage Addons dialog.\n<b>Highlight</b> - [MG] XDCC Queue II.\n<b>Click</b> on the Trash Can icon to remove.")
 		@%btnYes->$setImage("QOK.png")
+
 		@%btnNO = $new(button, $$)
 		@%btnNO->$setText(" No, Abort")
 		@%btnNo->$setImage("QCancel.png")
 		@%btnNo->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Manage this Addon:</p><p><pre><b>Click</b> to Abort the Manage Addon removal.")
+
 		@%layout->$addWidget(@%btnYes, 1,0)
 		@%layout->$addWidget(@%btnNo, 1,1)
-		
+
 		privateimpl(@%btnYes, ClickEvent)
 		{
 			addon.dialog -t
@@ -553,7 +567,6 @@ class("mgq::qremove","widget")
 			delete @$parent
 		}
 	}
-	
 }
 
 class("mgq::qmngr","widget")
@@ -566,13 +579,13 @@ class("mgq::qmngr","widget")
 			echo -w=$active -i=$msgtype(GenericStatus) "[MG] XDCC Queue Manager Closed!"
 		}
 	}
-	
+
 	function constructor()
 	{
 		@%version = "1.1.0"
 		@%layout = $new(layout, $$)
 		@$setGeometry(0,0,800,400)
-		@$setWindowTitle("MG-XDCC Queue II - Queue Manager v @%version")
+		@$setWindowTitle("MG-XDCC Queue II - Queue Manager v@%version")
 		@$setBackgroundColor(#A9A9A9)
 		$$->$setMinimumHeight(400)
 		$$->$setMaximumHeight(1200)
@@ -583,69 +596,69 @@ class("mgq::qmngr","widget")
 		@$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Queued File Listing</pre></p>)
 		@%lbQL = $new(listbox, $$)
 		@%lbQL->$setGeometry(0,0,500,150)
-		
+
 		@%lblEdit = $new(label, $$)
 		@%lblEdit->$setText("Queue Edits - Remove / Reset")
-		
+
 		@%lblActions = $new(label, $$)
 		@%lblActions->$setText("Queue Actions - Start / Pause - Resume / Set Delay - Cancel Delay / Search / Qloader")
-		
+
 		@%lblMisc = $new(label, $$)
 		@%lblMisc->$setText("Queue Misc - Info / Configure Queue / Close")
-		
+
 		@%btnRItem = $new(button, $$)
 		@%btnRItem->$setText(" &Remove Queued Item"	)
 		@%btnRItem->$setImage("QRemove.png")
-		
 		@%btnRItem->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Remove A Single Highlighted Entry</pre></p>)
+
 		@%btnReset = $new(button, $$)
 		@%btnReset->$setText(" Reset &Queue")
 		@%btnReset->$setImage("QReset.png")
-		
 		@%btnReset->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Delete All Queued Files</pre></p>)
+
 		@%btnStart = $new(button, $$)
 		@%btnStart->$setText(" &Begin Q-Run")
 		@%btnStart->$setImage("QOK.png")
-		
 		@%btnStart->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Start The Queue Run</pre></p>)
+
 		@%btnPause = $new(button, $$)
 		@%btnPause->$setText(" &Pause")
 		@%btnPause->$setImage("QPause.png")
-		
 		@%btnPause->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Pause The Current Queue Run</pre></p>)
+
 		@%btnDelay = $new(button, $$)
 		@%btnDelay->$setText(" &Delay")
 		@%btnDelay->$setImage("QSDelay.png")
-		
 		@%btnDelay->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Set or Cancel Delayed Start Time</pre></p>)
+
 		@%btnSearch = $new(button, $$)
 		@%btnSearch->$setText(" &Search")
 		@%btnSearch->$setImage("QSearch.png")
-		
 		@%btnSearch->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Initiate File Search</pre></p>)
+
 		@%btnQLoader = $new(button, $$)
 		@%btnQLoader->$setText(" Turn QLoader &ON ")
 		@%btnQLoader->$setImage("QLON.png")
-		
 		@%btnQLoader->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager"</pre></p><p><pre>Toggle QLoader ON/OFF</pre></p>)
+
 		@%btnQInfo = $new(button, $$)
 		@%btnQInfo->$setText(" Q&Info")
 		@%btnQInfo->$setImage("QInfo.png")
-		
 		@%btnQInfo->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Display XDCC Queue Info Widget</pre></p>)
+
 		@%btnSetup = $new(button, $$)
 		@%btnSetup->$setText(" S&etup Queue II")
 		@%btnSetup->$setImage("QOption.png")
-		
 		@%btnSetup->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Popup Configuration Panel</pre></p>)
+
 		if($aliasBody(mgan::main) != "")
 		{
 			# Add button for help files
 			@%btnNInfo = $new(button, $$)
 			@%btnNInfo->$setText(" &NInfo")
 			@%btnNInfo->$setImage("QInfo.png")
-			
 			@%btnNInfo->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Display Ninja Info Widget</pre></p>)
+
 			# Handle Display Ninja Help Files
 			privateimpl(@%btnNInfo, ClickEvent)
 			{
@@ -660,17 +673,16 @@ class("mgq::qmngr","widget")
 					%G_XDNinfo->$show()
 				}
 			}
-		
+
 		}
 		@%btnClose = $new(button, $$)
 		@%btnClose->$setText(" &Close Me")
 		@%btnClose->$setImage("QExit.png")
 		@%btnClose->$setBackgroundColor(#FFFFF0)
 		@%btnClose->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Exit The Queue Manager</pre></p>)
+
 		if($typeof(%MYQLB) != "array")
-		{
 			echo -w=$active -i=$msgtype(GenericStatus) "XDCC Queue Status:" $k(7)"EMPTY"$k
-		}
 		else
 		{
 			%t = %MYQLB[]#
@@ -683,18 +695,20 @@ class("mgq::qmngr","widget")
 			}
 			@%btnSetup->$setEnabled(0)
 		}
-		
+
 		if(@%lbQL->$count() == 0)
 		{
 			@%btnRItem->$setEnabled(0)
 			@%btnReset->$setEnabled(0)
 		}
+
 		if($typeof(%MYQUEUE) == "nothing")
 		{
 			@%btnStart->$setEnabled(0)
 			@%btnPause->$setEnabled(0)
 			@%btnDelay->$setEnabled(0)
 		}
+
 		@%btnSearch->$setEnabled(0)
 		if($isEventEnabled(OnQueryNotice,botQLoader))
 		{
@@ -702,6 +716,7 @@ class("mgq::qmngr","widget")
 			@%btnQLoader->$setImage("QLOFF.png")
 			@%btnSearch->$setEnabled(1)
 		}
+
 		@%layout->$addMultiCellWidget(@%lbQL, 1,1,0,4)
 		@%layout->$addMultiCellWidget(@%lblEdit, 2,2,0,1)
 		@%layout->$addMultiCellWidget(@%btnRItem, 3,3,0,1)
@@ -715,15 +730,15 @@ class("mgq::qmngr","widget")
 		@%layout->$addMultiCellWidget(@%lblMisc, 7,7,0,1)
 		@%layout->$addWidget(@%btnQInfo, 8,0)
 		@%layout->$addWidget(@%btnSetup, 8,1)
+
 		if($aliasBody(mgan::main) != "")
 		{
 			@%layout->$addWidget(@%btnNInfo, 8,2)
 			@%layout->$addWidget(@%btnClose, 8,3)
 		}
 		else
-		{
 			@%layout->$addWidget(@%btnClose, 8,2)
-		}
+
 		privateimpl(@%btnPause, ClickEvent)
 		{
 			# Check if Q-Run already paused
@@ -735,6 +750,7 @@ class("mgq::qmngr","widget")
 				@$parent->%btnPause->$setEnabled(1)
 				@$parent->%btnDelay->$setEnabled(0)
 				%QPAUSE = $false
+
 				if($typeof(%GETTHIS) == "nothing")
 				{
 					%qreply = $k(7)"RESUMED"$k
@@ -758,20 +774,25 @@ class("mgq::qmngr","widget")
 			}
 			%QPAUSE = $true
 			%qreply = $k(7)"PAUSED"$k
+
 			@$parent->%btnPause->$setText(" Res&ume")
 			@$parent->%btnPause->$setImage("QResume.png")
 			@$parent->%btnPause->$setToolTip("<p style="background-color:#000000;color:white"><pre>&nbsp;[MG] XDCC Queue II - Queue Manager "</pre></p><p><pre>Resume The Current Queue Run</pre></p>)
 			@$parent->%btnDelay->$setEnabled(1)
+
 			echo -w=$active  -i=$msgtype(GenericStatus) "XDCC Queue Run Status:" %qreply
 		}
+
 		privateimpl(@%btnSearch, ClickEvent)
 		{
 			$mgq::xdccq(search)
 		}
+
 		privateimpl(@%btnQInfo, ClickEvent)
 		{
 			$mgq::xdccq(cheats)
 		}
+
 		privateimpl(@%btnReset, ClickEvent)
 		{
 			if(@$parent->%lbQL->$count() == $false)
@@ -804,6 +825,7 @@ class("mgq::qmngr","widget")
 				echo -w=$active -i=$msgtype(GenericStatus) "XDCC Queue Loader Status:" %reply
 				halt;
 			}
+
 			if($isEventEnabled(OnQueryNotice,botQLoader))
 			{
 				eventctl -d OnQueryNotice botQLoader
@@ -815,9 +837,12 @@ class("mgq::qmngr","widget")
 				halt;
 			}
 		}
+
 		privateimpl (@%btnRItem, ClickEvent)
 		{
-			if(@$parent->%btnRItem->$isEnabled() == 0){halt;}
+			if(@$parent->%btnRItem->$isEnabled() == 0)
+				halt;
+
 			%i = @$parent->%lbQL->$currentItem()
 			if(%i == -1)
 			{
@@ -825,10 +850,12 @@ class("mgq::qmngr","widget")
 				halt;
 			}
 			%fn = @$parent->%lbQL->$textAt(%i)
+
 			# Get queue index from text
 			%id = %fn
 			%id = $str.lefttofirst(%id, "]")
 			%id = $str.rightfromfirst(%id, "[")
+
 			# Remove file from queue and notify user
 			%MYQUEUE[%id] = $null
 			%MYQtag[%id] = $null
@@ -836,6 +863,7 @@ class("mgq::qmngr","widget")
 			%MYQSCHK[%id] = $null
 			%MYQLB[%id] = $null
 			echo -w=$active -i=$msgtype(GenericStatus) "Removed: "%fn
+
 			# Remove item from listbox
 			@$parent->%lbQL->$removeItem(%i)
 			# Check llstbox has entries
@@ -853,6 +881,7 @@ class("mgq::qmngr","widget")
 					@$parent->%btnPause->$setEnabled(0)
 					@$parent->%btnDelay->$setEnabled(0)
 					@$parent->%btnSetup->$setEnabled(1)
+
 					# Since queue is empty do a reset
 					%QAdmin = "OK"
 					$mgq::xdccq(clearq)
@@ -863,22 +892,24 @@ class("mgq::qmngr","widget")
 		{
 			$mgq::xdccq(start)
 		}
+
 		privateimpl(@%btnSetup, ClickEvent)
 		{
 			$mgq::xdccq(setup)
 		}
+
 		privateimpl(@%btnDelay, ClickEvent)
 		{
 			$mgq::xdccq(delay)
 		}
 		objects.connect @%btnClose ClickEvent $$ closeEvent
+
 		privateimpl(@%btnClose, ClickEvent)
 		{
 			echo -w=$active -i=$msgtype(GenericStatus) "XDCC Queue Manager Closed!"
 			Delete @$parent
 		}
 	}
-	
 }
 
 class("mgq::qinfo","tabWidget")
@@ -890,7 +921,7 @@ class("mgq::qinfo","tabWidget")
 			Delete $$
 		}
 	}
-	
+
 	function constructor()
 	{
 		@%version = "1.1.0"
@@ -908,18 +939,24 @@ class("mgq::qinfo","tabWidget")
 		@%tabtwo = $new(vbox)
 		@%tabthree = $new(vbox)
 		@%tabfour = $new(vbox)
+
 		@%tbone = $new(textbrowser, @%tabone)
 		@%tbone->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - QInfo "</p><p><pre>Basic [MG] XDCC Queue Info</pre></p>)
+
 		@%tbtwo = $new(textbrowser, @%tabtwo)
 		@%tbtwo->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - QInfo "</p><p><pre>Description of Accel Keys</pre></p>)
+
 		@%tbthree = $new(textbrowser, @%tabthree)
 		@%tbthree->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - QInfo "</p><p><pre>Description of Manual Commands</pre></p>)
+
 		@%tbfour = $new(textbrowser, @%tabfour)
 		@%tbfour->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - QInfo "</p><p><pre>Description of GUI Queue Manager and Buttons</pre></p>)
+
 		@%tbone->$setSource(@%html1)
 		@%tbtwo->$setSource(@%html2)
 		@%tbthree->$setSource(@%html3)
 		@%tbfour->$setSource(@%html4)
+
 		$$->$addTab(@%tabone,"Info", "QInfo.png")
 		$$->$addTab(@%tabtwo, "Accel Keys", 65)
 		$$->$addTab(@%tabthree, "Manual Commands", 9)
@@ -929,7 +966,6 @@ class("mgq::qinfo","tabWidget")
 		$this->$setTabToolTip(@%tabthree, "<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - QInfo "</p><p><pre>Description of Manual Commands</pre></p>)
 		$this->$setTabToolTip(@%tabfour, "<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - QInfo "</p><p><pre>Description of GUI Queue Manager and Buttons</pre></p>)
 	}
-	
 }
 
 class("mgq::qdelay","widget")
@@ -938,10 +974,10 @@ class("mgq::qdelay","widget")
 	{
 		privateimpl($$, closeEvent)
 		{
-			Delete $$
+			delete $$
 		}
 	}
-	
+
 	function constructor()
 	{
 		@%version = "1.1.0"
@@ -953,29 +989,31 @@ class("mgq::qdelay","widget")
 		@$centerToScreen()
 		@$setFocus()
 		@%layout->$setSpacing(3)
+
 		@%lblInfoMsg = $new(label, $$)
 		@%lblInfoMsg->$setText("Set a delayed start time for downloading your queued files.<br/><br/>Uses the 24 Hour format.<br/><br/>Hours from 0-23 Minutes from 0-59<br/><br/>** Note 00:00 hrs == 24:00 hrs **")
 		@%lblInfoMsg->$setMargin(5)
 		@%lblInfoMsg->$setFrameStyle(WinPanel, Raised)
 		@%lblInfoMsg->$setAlignment(HCenter, VCenter)
+
 		@%grpTime = $new(groupbox, $$)
 		@%grpTime->$setOrientation(Horizontal)
 		@%grpTime->$setTitle("           Set Delayed Start Time")
 		@%grpTime->$setFlat(1)
+
 		@%grpActions = $new(groupbox, $$)
 		@%grpActions->$setOrientation(Horizontal)
+
 		@%sbdelayhr = $new(spinbox, @%grpTime)
 		@%sbdelayhr->$setMaxValue(23)
 		@%sbdelayhr->$setMinValue(0)
 		@%sbdelayhr->$setLineStep(1)
+
 		if($date(H) == 24)
-		{
 			@%sbdelayhr->$setValue(0)
-		}
 		else
-		{
 			@%sbdelayhr->$setValue($date(H))
-		}
+
 		@%sbdelayhr->$setSuffix(" Hour(s)")
 		@%sbdelayhr->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Delayed Start Time:</p><p><pre> Use the up/dn arrows to select the Hour(s) component.</p></pre>")
 		@%sbdelaymn = $new(spinbox, @%grpTime)
@@ -985,45 +1023,46 @@ class("mgq::qdelay","widget")
 		@%sbdelaymn->$setValue($date(M))
 		@%sbdelaymn->$setSuffix(" Minute(s)")
 		@%sbdelaymn->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Delayed Start Time:</p><p><pre> Use the up/dn arrows to select the Minute(s) component.</p></pre>")
+
 		@%btnSet = $new(button, @%grpActions)
 		@%btnSet->$setText(" &Set Delay")
 		@%btnSet->$setImage("QOK.png")
 		@%btnSet->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Delayed Start Time:</p><p><pre><b>Click</b> - Set selected Delayed Start Time.</p></pre>")
+
 		@%btnCancel = $new(button, @%grpActions)
 		@%btnCancel->$setText(" &Cancel")
 		@%btnCancel->$setImage("QCancel.png")
 		@%btnCancel->$setToolTip("<p style="background-color:#000000;color:white">&nbsp;[MG] XDCC Queue II - Delayed Start Time:</p><p><pre><b>Click</b> - Abort setting Delayed Start Time.</p></pre>")
+
 		@%layout->$addMultiCellWidget(@%lblInfoMsg, 0,0,0,2)
 		@%layout->$addMultiCellWidget(@%grpTime, 1,1,0,2)
 		@%layout->$setAlignment(@%grpTime, HCenter)
 		@%layout->$addMultiCellWidget(@%grpActions, 2,2,0,2)
 		@%layout->$setAlignment(@%grpActions, HCenter)
-		
+
 		privateimpl(@%btnSet, ClickEvent)
 		{
 			%checkhr = @$parent->$parent->%sbdelayhr->$value()
 			%checkmn = @$parent->$parent->%sbdelaymn->$value()
-			
+
 			if($length(%checkhr) == 1)
-			{
 				%checkhr = $str.prepend(%checkhr, "0")
-			}
+
 			if($length(%checkmn) == 1)
-			{
 				%checkmn = $str.prepend(%checkmn, "0")
-			}
+
 			%final = %checkhr
 			%final = $str.append(%final,%checkmn)
 			$mgq::delaystart(%final)
-			delete @$parent->$parent	
+			delete @$parent->$parent
 		}
+
 		privateimpl(@%btnCancel, ClickEvent)
 		{
 			echo -w=$active -i=$msgtype(GenericStatus) "Set Delay Operation Cancelled!"
 			delete @$parent->$parent
 		}
 	}
-	
 }
 
 class("mgq::qcheckvalid","object")
@@ -1032,26 +1071,23 @@ class("mgq::qcheckvalid","object")
 	{
 		# Check if user is in both channels
 	}
-	
+
 	function chkValid()
 	{
 		%cid1 = $channel("#mg-chat")
 		%cid2 = $channel("#moviegods")
+
 		if((%cid1 == $true) && (%cid2 == $true))
-		{
 			return $true
-		}
 		else
 		{
 			echo -w=$active -i=$msgtype(GenericStatus) "You are "$b"NOT"$b" in the neccessary channels for this script to function!"
 			echo -w=$active -i=$msgtype(GenericStatus) "Turning the XDCC Queue Loader:" $k(4)$b"OFF"$b$k
+
 			if($isEventEnabled(OnQueryNotice,botQLoader))
-			{
 				$mgq::xdccq(qloader)
-			}
+
 			return $false
 		}
 	}
-	
 }
-

@@ -133,7 +133,7 @@ class(installer,object)
 			%d = ""
 			foreach(%file,$this->%lFiles)
 			{
-//				%file =~ s/"^$file.localdir()/(.*)$"/"\$file.localdir(\\1)"/
+				//%file =~ s/"^$file.localdir()/(.*)$"/"\$file.localdir(\\1)"/
 				%file = $str.replace(%file,"\\","/")
 				%c .= "file.remove -q \"%file\"$lf";
 				if(%d != $file.extractpath(%file))
