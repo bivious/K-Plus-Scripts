@@ -1,0 +1,24 @@
+# Initialization
+%version = "1.1.0"
+
+%xdccqcfg = $config.open(XDCCQ.kvc)
+%QSSL = $config.read(%xdccqcfg,SSL,$true)
+%QPAS = $config.read(%xdccqcfg,PASSIVE,"e")
+%QBOT = $config.read(%xdccqcfg,REGION,"ALL")
+%QDLM = $config.read(%xdccqcfg,QDLM,$false)
+%MaxDL = $config.read(%xdccqcfg,MXDL,"1")
+%QMDLC = $config.read(%xdccqcfg,QMDLC,$true)
+%QMDLS = $config.read(%xdccqcfg,MDLS,"1.00")
+config.write %xdccqcfg SSL %QSSL
+config.write %xdccqcfg REGION %QBOT
+config.write %xdccqcfg PASSIVE %QPAS
+config.write %xdccqcfg QDLM %QDLM
+config.write %xdccqcfg MXDL %MaxDL
+config.write %xdccqcfg QMDLC %QMDLC
+config.write %xdccqcfg MDLS %QMDLS
+config.close %xdccqcfg
+eventctl -d OnQueryNotice botQLoader
+eventctl -d OnDCCFileTransferSuccess queueXDCC
+eventctl -d OnDCCFileTransferFailed queueXDCC
+eventctl -d OnDCCFileTransferBegin qdlcheck
+echo  -i=$msgtype(GenericVerbose) "[MG] XDCC Queue II Addon Version -" %version " Initialization Complete."

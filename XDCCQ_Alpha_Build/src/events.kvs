@@ -1,0 +1,342 @@
+# [MG] XDCC Queue II Addon - Events
+event(OnAccelKeyPressed,xdccqCMDS)
+{
+	%w = $window(%MGQCC)
+	if(!$window.hasUserFocus(%w)){halt;}
+	
+	switch($0){
+		case("F2"){ %qckcmd = "/mgq::xdccq cheats"
+			say -x %qckcmd
+			}
+		case("F3"){ %qckcmd = "/mgq::xdccq qmngr"
+			say -x %qckcmd
+			}
+		case("F4"){ %qckcmd = "/mgq::xdccq start"
+			say -x %qckcmd
+			}
+		case("F5"){ %qckcmd = "/mgq::xdccq search"
+			say -x %qckcmd
+			}
+		case("F6"){ %qckcmd = "/mgq::xdccq qloader"
+			say -x %qckcmd
+			}
+		case("F7"){ %qckcmd = "/mgq::xdccq setup"
+			say -x %qckcmd
+			}
+		
+		}
+}
+event(OnDCCFileTransferBegin,qdlcheck)
+{
+	if(!%QRUN){return;}
+	
+	# Check if download is one of the queued files.
+	%l = %QChecker[]#
+	for(%i=0;%i<%l;%i++)
+	{
+		if(%QChecker[%i] != $null)
+		{
+			%qfilename = $dcc.remoteFileName($0)
+			if($str.contains(%qfilename, %MYQUEUE[%QChecker[%i]],0))
+			{
+				%DLQID <+ $0
+				%QChecker[%i] = ""
+			}
+		}
+	}
+	# Check if all queued files started downloading.
+	if($typeof(%QChecker) == "nothing")
+		{
+			unset %QChecker
+		}
+}
+event(OnDCCFileTransferFailed,queueXDCC)
+{
+	if($dcc.isFileUpload($2) == 1){halt;}
+	# The line above may be a fix for error when uploading
+	%test = $($length($dcc.remoteFileName($2)) - 4)
+	%t = $integer(%test)
+	%l = %GETTHIS[]#
+	
+	# Check if failed download was a queued file.
+	for(%i=0;%i<%l;%i++)
+	{
+		if(%GETTHIS[%i] != $null)
+		{
+			if($str.left($dcc.remoteFileName($2),%t) == %MYQUEUE[%GETTHIS[%i]])
+			{			
+				%botnick = $dcc.remoteNick($2)
+				echo -w=$window(%MGQCC) $k(7)"File transfer from" %botnick "** FAILED **  - Removed from queue -"$k
+				%failed = %MYQUEUE[%GETTHIS[%i]] - %botnick - $0
+				if(%STALLED)
+				{
+					%failed = %MYQUEUE[%GETTHIS[%i]] - %botnick - Aborted Stalled Download
+					unset %STALLED
+				}
+				%QFails <+ %failed
+				%MYQUEUE[%GETTHIS[%i]] = $null
+				%MYQTAG[%GETTHIS[%i]] = $null
+				%MYQNICK[%GETTHIS[%i]] = $null
+				%MYQSCHK[%GETTHIS[%i]] = $null
+				%GETTHIS[%i] = $null
+				%QFnames[%i] = $null
+			}
+		}
+	}
+	
+	# Checking if all queued downloads are completed.
+	
+		if($typeof(%GETTHIS) == "nothing")
+		{
+			unset %GETTHIS
+			unset %QFnames
+			unset %ErrorCheck
+			if($isTimer(checkqdl)){killtimer checkqdl;}
+			if($isTimer(chkstall)){killtimer chkstall;}
+			timer -s (delay1, 5000)
+			if(!%QPAUSE){$mgq::xdccq(start);}
+		}
+}
+event(OnDCCFileTransferSuccess,queueXDCC)
+{
+	if($dcc.isFileUpload($1) == 1){halt;}
+	%test = $($length($dcc.remoteFileName($1)) - 4)
+	%t = $integer(%test)
+	%l = %GETTHIS[]#
+	
+	# Check if successful download was a queued file.
+	for(%i=0;%i<%l;%i++)
+	{
+		if(%GETTHIS[%i] != $null)
+		{
+			if($str.left($dcc.remoteFileName($1),%t) == %MYQUEUE[%GETTHIS[%i]])
+			{	
+				%botnick = $dcc.remoteNick($1)
+				%QSDL <+ $1
+				%QSDLSpeeds <+ $dcc.averageSpeed($1)
+				%QSDLBytes <+ $dcc.remoteFilesize($1)
+				echo -w=$window(%MGQCC) File transfer from %botnick was successful.
+				%MYQUEUE[%GETTHIS[%i]] = $null
+				%MYQTAG[%GETTHIS[%i]] = $null
+				%MYQNICK[%GETTHIS[%i]] = $null
+				%MYQSCHK[%GETTHIS[%i]] = $null
+				%GETTHIS[%i] = $null
+				%QFnames[%i] = $null
+				
+			}
+		}
+	}
+				
+	# Check if all queued downloads are completed.
+	
+		if($typeof(%GETTHIS) == "nothing")
+		{
+			unset %GETTHIS
+			unset %QFnames
+			unset %ErrorCheck
+			if($isTimer(checkqdl)){killtimer checkqdl;}
+			if($isTimer(chkstall)){killtimer chkstall;}
+			timer -s (delay1, 5000)
+			if(!%QPAUSE){$mgq::xdccq(start);}
+		}
+}
+event(OnKVIrcStartup,xdccconfig)
+{
+	# Open config file
+	%xdccqcfg = $config.open(XDCCQ.kvc)
+	# Get XDCC Queue SSL setting
+	%QSSL = $config.read(%xdccqcfg,SSL,$true)
+	# Get XDCC Queue Passive Bots setting
+	%QPAS = $config.read(%xdccqcfg,PASSIVE,"e")
+	# Get XDCC Queue Regional Bots setting
+	%QBOT = $config.read(%xdccqcfg,REGION,"")
+	# Get DL Mode Setting
+	%QDLM = $config.read(%xdccqcfg,QDLM,$true)
+	# Get number of downloads per trigger
+	%MaxDL = $config.read(%xdccqcfg,MXDL,"")
+	# Get Minimum DL Speed Control
+	%QMDLC = $config.read(%xdccqcfg,QMDLC,$true)
+	# Get Minimum DL Speed
+	%QMDLS = $config.read(%xdccqcfg,MDLS,"")
+	# Close config file
+	config.close %xdccqcfg
+}
+event(OnQueryNotice,botErrorCheck)
+{
+	/*
+		Grab the notices from BotReign when using the '!get' method for downloading.
+		Get the assigned botnicks, then add them to the nicks queue array.
+		When BotReign reports - Nothing found for: - Remove the files not found so the queue doesn't hang.
+		
+	*/
+	if(%QRUN != 1){return;}
+	if(($0 == "BotReign") && (($str.contains($3, "Trying to send you from",1)) || ($str.contains($3, "Nothing found for:",1))))
+	{
+		%BRQueue <+ $3
+		foreach(%reply, %BRQueue)
+		{
+			foreach(%y, %QFnames)
+			{
+				if($str.contains(%reply,%y))
+				{
+					%ErrorCheck <+ %reply
+				}
+			}
+		}
+		%l = %ErrorCheck[]#
+		%m = %GETTHIS[]#
+		if(%l == %m){
+		unset %BRQueue
+		
+			foreach(%reply, %ErrorCheck)
+			{
+				if($str.contains(%reply, "Trying to send you from",1))
+				{
+					%gfname =  $str.rightfromfirst(%reply, ": ")
+					%gfname = $str.strip($str.lefttolast(%gfname,"."))
+					%bot = $str.lefttofirst(%reply, "#")
+					%bot = $str.strip($str.rightfromfirst(%bot,"from",1))
+					
+					foreach(%g,%GETTHIS)
+					{
+						if(%MYQUEUE[%g] == %gfname)
+						{
+							%MYQNICK[%g] = %bot
+						}
+					}
+				}	
+				if($str.contains(%reply, "Nothing found for:",1))
+				{
+					%bfname = $str.rightfromfirst(%reply, ": ")
+					foreach(%x,%QFnames)
+					if(%x == %bfname)
+					{
+						%QFails <+ BotReign Reports - %reply
+						echo -w=$window(%MGQCC) $k(7) "Nothing found for:" %bfname " - Removed from queue -"$k
+				
+						foreach(%b,%GETTHIS)
+						{
+							if(%MYQUEUE[%b] != $null)
+							{
+								if(%MYQUEUE[%b] == %bfname)
+								{
+									%MYQUEUE[%b] = $null
+									%MYQTAG[%b] = $null
+									%MYQNICK[%b] = $null
+									%na = %b
+									
+								}
+							}
+						}
+					# Cleanup
+					%l = %GETTHIS[]#
+					for(%i=0;%i<%l;%i++)
+					{
+						if(%GETTHIS[%i] == %na)
+						{
+							%GETTHIS[%i] = $null
+						}
+					}
+					if($typeof(%GETTHIS) == "nothing")
+					{
+						unset %GETTHIS
+						unset %QFnames
+						unset %ErrorCheck
+						if($isTimer(checkqdl)){killtimer checkqdl;}
+						if($isTimer(chkstall)){killtimer chkstall;}
+						timer -s (delay1, 5000)
+						if(!%QPAUSE){$mgq::xdccq(start);}
+					}
+				}
+			 }
+		  }
+	   }
+	}
+}
+event(OnQueryNotice,botQCheck)
+{
+	# If All Slots Full, get initial notice & notify user
+	if($str.contains($3,"All Slots Full"))
+	{
+		%BotQueued <+ $3
+		$mgq::botqcheck()
+	}
+	if($str.contains($3,"You can only have 1 transfer"))
+	{
+		%BotQueued <+ $3
+		$mgq::botqcheck()
+	}
+}
+event(OnQueryNotice,botQLoader)
+{
+	# Not sure who scripted the original code for this Right Click Routine
+	# But Many Thanks for your Hard Work!!!
+	# I have modified it to work for this function
+	# And a Special Thanks to TheReign for his REGEX expressions.
+	if($context.networkName != "Abjects"){halt;}
+	
+	%xdccWin = "[MG] XDCC Queue II Loader"
+	%nicks = $array("BotReign","ls")
+	%BR = $false
+	
+	foreach (%currentNick, %nicks){
+		# notice handler $0 is the nick of who sent the notice. if $0 == a name in our watch list...
+		if ($0 == %currentNick){
+			if($0 == "BotReign"){%BR = $true;}
+			# if the hilight window doesn't exist...
+			if (!$window.exists($window(%xdccWin))){
+				# create hilight window
+				$window.open("m", %xdccWin, $context, QTools.png)
+			}
+			# $3 is the message line
+			# if the notice message line contains " | Used" it is probably a pack line...
+			if ($str.contains($str.stripcolors($3), " | Used")){
+				# If bot offline skip it
+				if($str.contains($str.stripcolors($3), "OFFLINE")){break;}
+				
+				# Using REGEX expressions supplied by 'TheReign'
+				# Grab the %SIZE & %NICK 
+				%fsize = $str.grep("(\\d+\\.?\\d*[bgkm])", $str.stripcolors($3), "rp")
+				%botnick = $str.grep("msg\\s+(\\S+)\\s+xdcc", $str.stripcolors($3), "rp")
+	
+				# split the pack line on "whitespace|whitespace" into %sr
+				# based on a basic search setup 
+				# | %GETSx | %SIZE | %RLS | /msg %NICK xdcc %SSEND %PNUM | %STATUS  %OFFLINE
+				%sr[] = $str.split("\\s+\\|\\s+",$str.stripcolors($3),r)
+	
+				# Using yet another REGEX expression supplied by 'TheReign'
+				# Step through all elements of the array to find %RLS
+				%tlength = $length(%sr[])
+				for(%a=0;%a<%tlength;%a++){
+					if ($str.grep("\\S+\\.[a-zA-Z0-9]{2,4}$",%sr[%a],"r")){
+						%rls = $str.grep("(\\S+\\.[a-zA-Z0-9]{2,4}$)",%sr[%a],"rp")[1]
+					}
+				}
+	
+				# sort out the unwanted results
+				# first, check if PASSIVE bots are enforced
+				if(%QPAS=="f"){
+					if(!$str.contains(%botnick[1], "|P|")){break;}
+				}
+				# then, check if PASSIVE bots are forbidden
+				if(%QPAS=="n"){
+					if($str.contains(%botnick[1], "|P|")){break;}
+				}
+				# last, check for regional selection
+				if(%QBOT=="AS"){
+					if(!$str.contains(%botnick[1], "|AS|")){break;}
+				}
+				if(%QBOT=="US"){
+					if(!$str.contains(%botnick[1], "|US|")){break;}
+				}
+				if(%QBOT=="EU"){
+					if(!$str.contains(%botnick[1], "|EU|")){break;}
+				}
+				echo -w=$window(%xdccWin) Right Click > $cr![!rbt]$("mgq::add2q" %rls %botnick[1])$cr$k(8,4)"[A2Q]"$k$cr %rls | %fsize[1] | %botnick[1] 
+			} else {
+				# else notice message line is just some other message so output it.
+				#echo -w=$window(%xdccWin) $0: $3
+			}
+		}
+	}
+}

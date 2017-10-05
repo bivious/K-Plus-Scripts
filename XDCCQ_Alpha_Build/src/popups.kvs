@@ -1,0 +1,79 @@
+defpopup(XDCCQ.menu)
+{
+	prologue
+	{
+		%:Qenabled = $isEventEnabled(OnQueryNotice,botQLoader)
+		%:Qstatus = $false
+		if($typeof(%MYQUEUE) == "array"){%:Qstatus = $true;}
+	
+	}
+	
+	item(XDCC Queue Info,QInfo.png) (!%:IDisplayed)
+	{
+		mgq::xdccq cheats
+	}
+	
+	item(QLoader Configuration,QOption.png) (!%:PDisplayed && !%:Qstatus)
+	{
+		mgq::xdccq setup
+	}
+	
+	item(GUI Queue Manager,QQueue.png) (!%:CDisplayed)
+	{
+		mgq::xdccq qmngr
+	}
+	
+	separator
+	
+	popup(QLoader Commands,QTools.png)
+	{
+		item(Turn QLoader OFF,QLOFF.png) (%:Qenabled)
+		{
+			eventctl -d OnQueryNotice botQLoader
+			%reply = $k(4)"OFF"$k
+			echo -w=$active -i=$msgtype(GenericStatus) "XDCC Queue Loader Status:" %reply
+			if($objects.exists(%G_XQManager))
+			{
+				%G_XQManager->%btnQLoader->$setText(" Turn QLoader &ON ")
+				%G_XQManager->%btnQLoader->$setImage("QLON.png")
+				%G_XQManager->%btnSearch->$setEnabled(0)
+			}
+		}
+		
+		item(Turn QLoader ON,QLON.png) (!%:Qenabled)
+		{
+			eventctl -e OnQueryNotice botQLoader
+			%reply = $k(9)"ON"$k
+			echo -w=$active -i=$msgtype(GenericStatus) "XDCC Queue Loader Status:" %reply
+			if($objects.exists(%G_XQManager))
+			{
+				%G_XQManager->%btnQLoader->$setText(" Turn QLoader O&FF")
+				%G_XQManager->%btnQLoader->$setImage("QLOFF.png")
+				%G_XQManager->%btnSearch->$setEnabled(1)
+			}
+		}
+		
+		item(Search,QSearch.png) (%:Qenabled)
+		{
+			mgq::xdccq search
+		}
+		
+		item(Begin Q-Run,QOK.png) (%:Qstatus)
+		{
+			mgq::xdccq start
+		}
+	}
+	
+		separator
+	
+	item(Uninstall This Script,QErase.png)
+	{
+		mgq::xdccq uninstall
+	}
+}
+
+popup.delitem -q channeltextview XDCCQ.separator0
+popup.addSeparator channeltextview XDCCQ.separator0
+popup.delitem -q channeltextview XDCCQ.menu
+popup.addExtPopup channeltextview XDCCQ.menu "[MG] XDCC Queue II Menu"  QQueue.png XDCCQ.menu
+

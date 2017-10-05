@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ul#menu {
+    padding: 0;
+}
+
+ul#menu li {
+    display: inline;
+}
+
+ul#menu li a {
+    background-color: white;
+    color: blue;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 4px 4px 0 0;
+}
+
+ul#menu li a:hover {
+    background-color: white;
+    color: red;
+}
+</style>
+</head>
+<body>
+<table bgcolor="#F2DFB1" width="100%">
+  <tbody>
+    <tr>
+      <td>&nbsp; <font color="#404040" size="+2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i><b>#MOVIEGODS</b></i></font> </td>
+    </tr>
+  </tbody>
+</table>
+<table bgcolor="#E5E4E2" width="100%">
+  <tbody>
+    <tr>
+      <td>&nbsp; <font color="#000000" size="+1"> <b>[MG] XDCC Queue II &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V1.1.0 &nbsp;&nbsp;Addon&nbsp;&nbsp;2017</b> </font> </td>
+    </tr>
+  </tbody>
+</table>
+<table bgcolor="#E5E4E2" width="100%">
+  <tbody>
+    <tr>
+      <td>&nbsp; <font color="#000000"> <b>GUI Queue Manager and Controls</b> </font> </td>
+    </tr>
+  </tbody>
+</table>
+<table bgcolor="#E5E4E2" width="100%">
+  <tbody>
+    <tr>
+      <td>&nbsp; <font color="#000000"> <b>Description:</b> </font> </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<pre>
+ The <b>GUI Queue Manager</b> once opened is an interactive interface.
+ When a file is added to the queue the list will be updated.
+ When a file is triggered for download it will be deleted from the list.
+</pre>
+<br>
+<table bgcolor="#E5E4E2" width="100%">
+  <tbody>
+    <tr>
+      <td>&nbsp; <font color="#000000"> <b>GUI Queue Manager Buttons:</b> </font> </td>
+    </tr>
+  </tbody>
+</table>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Remove Queued Item ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>Will remove an item from the queue listing.</li>
+		<li>Select an item with the mouse or arrow keys.</li>
+		<li>Click on the button or use Alt+R to remove the selected item.</li>
+		<li>Button will be greyed-out when the queue is empty.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Reset Queue ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>Will reset the queue removing all item(s) from the queue listing.</li>
+		<li>Requires a confirmation before proceeding for safety.</li>
+		<li>Click on the button or use Alt+Q to reset the queued item(s).</li>
+		<li>Button will be greyed-out when the queue is empty.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Begin Run ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>Starts the download process of the queued file(s).</li>
+		<li>Click on the button or use Alt+B to start downloading.</li>
+		<li>Button will be greyed-out while the queue is running or empty.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Pause / Resume ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>This is a combo button and acts as a toggle.</li>
+		<li>Pause the current queue run, the button changes to <b>Resume</b>.</li>
+		<li>Click on the button or Alt+P to pause the current run.</li>
+		<li>Once paused, click on the button or use Alt+u to resume the current run.</li>
+		<li>Button will be greyed-out when the queue is empty.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Delay ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>This is a combo button and acts as a toggle.</li>
+		<li>Set / Cancel a time delayed start, the icon will change depending on mode.</li>
+		<li>Click on the button or use Alt+D to either set or cancel the delay.</li>
+		<li>Button will be greyed-out while the queue is running or empty.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Search ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>Initiates a file search by a popup search widget.</li>
+		<li>Click the button or use Alt+S to activate.</li>
+		<li>You can enter exclusions like -720p,german before the filename.</li>
+		<li>Once your search parameters have been entered.</li>
+		<li>Click on the <b>OK</b> button or hit the <b>Enter</b> key to start the search.</li>
+		<li>Users that wish to use <b>Reqular Expression</b> may do so by checking the <b>Enable REGEX Searches</b>.</li> 
+		<li>Click on the <B>Cancel</B> button to abort the search.</li>
+		<li>Button will be greyed-out when the queue is empty or if the QLoader is OFF.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Turn Qloader ON/OFF ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>This is a combo button and acts as a toggle.</li>
+		<li>The buttons icon and name will change depending on mode.</li>
+		<li>If you toggle the QLoader OFF, the Search button will grey-out.</li>
+		<li>When you toggle the QLoader ON, the Search button will be active.</li>
+		<li>Click on the button or use Alt+O or Alt+F to activate the toggle.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ QInfo ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>Displays this widget for easy access to functions.</li>
+		<li>Can be minimized to the taskbar for easy access.</li>
+		<li>Click on the button or use Alt+I to activate.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Setup Queue II ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>Displays the configuration panel.</li>
+		<li>Changes the setting you want and Apply.</li>
+		<li>Or Cancel to abort any changes.</li>
+		<li>Click on the button or use Alt+e to activate.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ NInfo ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>If you also have [MG] Announcer-Ninja Addon installed.</li>
+		<li>Displays the Ninja's widget for easy access to functions.</li>
+		<li>Can be minimized to the taskbar for easy access.</li>
+		<li>Click on the button or use Alt+N to activate.</li>
+	</ul>
+</ul>
+<ul style="list-style-type:disc">
+	<li><font color="#FF0000"><b>[ Close Me ]</b></font></li>
+	<ul style="list-style-type:circle">
+		<li>Exit the GUI Queue Manager.</li>
+		<li>Nothing more, nothing less.</li>
+		<li>Click on the button or use Alt+C to close the GUI.</li>
+	</ul>
+</ul>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

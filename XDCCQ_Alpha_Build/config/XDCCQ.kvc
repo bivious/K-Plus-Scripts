@@ -1,0 +1,9 @@
+# KVIrc configuration file
+[KVIrc]
+QMDLC=1
+QDLM=1
+MDLS=5.00
+MXDL=2
+SSL=1
+REGION=ALL
+PASSIVE=e
