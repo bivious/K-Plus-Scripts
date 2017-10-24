@@ -92,13 +92,22 @@ class("qupm::setup", "widget")
 	function destructor()
 	{
 		# the privateimpl($$, closeEvent) calls this destructor
-		%G_qupmManager->%btnOptions->$setEnabled(1)
-		delete $$
+		if(!$objects.exists(%G_qupmManager))
+		{
+			delete -q $$
+			unset %G_qupmSetup
+		}
+		else
+		{
+			delete -q $$
+			%G_qupmManager->$show()
+			unset %G_qupmSetup
+		}
 	}
 
 	function constructor()
 	{
-		@%version = "1.0.0"
+		@%version = "1.1.0"
 		@$loadSetUp()
 		@%layout = $new(layout, $$)
 		@%layout->$setSpacing(10)
@@ -399,15 +408,16 @@ class("qupm::setup", "widget")
 
 		privateimpl(@%btnClose, clickEvent)
 		{
+			delete -q @$parent->$parent
+			%G_qupmManager->$show()
 			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager's Options menu has been closed."
-			%G_qupmManager->%btnOptions->$setEnabled(1)
-			delete @$parent->$parent
+			unset %G_qupmSetup
 		}
 
 		privateimpl($$, closeEvent)
 		{
-			echo -w=$active -i=$msgtype(GenericWarning) "Notice: The PM Manager's Options menu has been closed."
 			@$destructor()
+			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager's Options menu has been closed."
 		}
 	}
 
@@ -628,12 +638,23 @@ class("qupm::main", "widget")
 	function destructor()
 	{
 		# The privateimpl($$, closeEvent) calls this destructor
-		delete $$
+		if(!$objects.exists(%G_qupmSetup))
+		{
+			delete -q $$
+			unset %G_qupmManager
+		}
+		else
+		{
+			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager's Options menu has been closed."
+			%G_qupmManager->$hide()
+			delete -q %G_qupmSetup
+			unset %G_qupmSetup
+		}
 	}
 
 	function constructor()
 	{
-		@%version = "1.0.0"
+		@%version = "1.1.0"
 		@%layout = $new(layout, $$)
 		@%layout->$setSpacing(6)
 		@$setGeometry(0,0,600,350)
@@ -822,33 +843,6 @@ class("qupm::main", "widget")
 			@$parent->$parent->$checkDupe(%item)
 		}
 
-		privateimpl(@%btnExit, clickEvent)
-		{
-			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager has been closed."
-			unset %G_qupmManager
-			delete @$parent->$parent
-		}
-
-		privateimpl(@%btnRfrsh, clickEvent)
-		{
-			%id = $active()
-			if($window.type(%id) != "channel")
-			{
-				echo -w=$active -i=$msgtype(GenericWarning) "Notice: This is not a valid channel window."
-				halt;
-			}
-			else
-			{
-				%refresh = %G_qupmManager->$loadList(%id)
-			}
-
-			if(%refresh == $true)
-			{
-				echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The "$b"Whitelisted Users"$b" list has been refreshed successfully."
-				echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The $b$chan.name(%id)$b Channel Users list has been refreshed successfully."
-			}
-		}
-
 		privateimpl(@%btnRemUser, clickEvent)
 		{
 			%count = @$parent->$parent->%lbTrustedUsers->$count()
@@ -871,11 +865,24 @@ class("qupm::main", "widget")
 			@$parent->$parent->$saveList(1)
 		}
 
-		privateimpl(@%btnOptions, clickEvent)
+		privateimpl(@%btnRfrsh, clickEvent)
 		{
-			%optpanel = $new(qupm::setup)
-			%optpanel->$show()
-			@$parent->$parent->%btnOptions->$setEnabled(0)
+			%id = $active()
+			if($window.type(%id) != "channel")
+			{
+				echo -w=$active -i=$msgtype(GenericWarning) "Notice: This is not a valid channel window."
+				halt;
+			}
+			else
+			{
+				%refresh = %G_qupmManager->$loadList(%id)
+			}
+
+			if(%refresh == $true)
+			{
+				echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The "$b"Whitelisted Users"$b" list has been refreshed successfully."
+				echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The $b$chan.name(%id)$b Channel Users list has been refreshed successfully."
+			}
 		}
 
 		privateimpl(@%btnPMStatus, clickEvent)
@@ -904,10 +911,33 @@ class("qupm::main", "widget")
 			config.close %update
 		}
 
+		privateimpl(@%btnOptions, clickEvent)
+		{
+			%G_qupmSetup = $new(qupm::setup)
+			%G_qupmSetup->$show()
+			%G_qupmManager->$hide()
+		}
+
+		privateimpl(@%btnExit, clickEvent)
+		{
+			if(!$objects.exists(%G_qupmSetup))
+			{
+				echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager has been closed."
+				delete -q @$parent->$parent
+				unset %G_qupmManager
+			}
+			else
+			{
+				echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager has been closed."
+				delete -q @$parent->$parent
+				delete -q @$parent->$%G_qupmSetup
+				unset %G_qupmManager, %G_qupmSetup
+			}
+		}
+
 		privateimpl($$, closeEvent)
 		{
 			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The PM Manager has been closed."
-			unset %G_qupmManager
 			@$destructor()
 		}
 	}

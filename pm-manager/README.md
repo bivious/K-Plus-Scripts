@@ -25,12 +25,6 @@ The PM Manager allows you to easily keep a single working and refreshable backup
 * A ZNC friendly default exclusion rule.
 * A comprehensive help file.
 
-### Todo
-
-* Bump version 1.x.x at some stage?
-* support earlier versions?
-* More testing, gather feedback.
-
 ### Install
 
 #### From Source
@@ -42,10 +36,10 @@ Once you have the files extracted.
   then select the `install.kvs` file and click open.
 
 #### From Binary
-* Click [here to download the PM_Manager_$version.zip](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/PM_Manager-1.0.0-beta-7.zip "PM_Manager-1.0.0-beta-7.zip") verify [SHA256 Checksum](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/sha256sum.txt "sha256sum.txt") and extract it.
+* Click [here to download the PM_Manager_$version.zip](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/PM_Manager-1.1.0.zip "PM_Manager-1.1.0.zip") verify [SHA256 Checksum](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/sha256sum.txt "sha256sum.txt") and extract it.
 ###### SHA256 Checksum
 ```hash
-ceea9668e9e3debc016935bcbd0364863da64cccfb41caddd49e1f6053bb606e
+e426d61ddcb8a5d46aeda6e2efd107035042f21f1b98139d507351f84de3f386
 ```
 
 * Goto Settings menu or press `Ctrl+Shft+N`

@@ -20,8 +20,9 @@
 ################################################################################
 # Register the script: this must be the first instruction executed
 # Since it will abort with an error when a greater version is already installed
+%version = "1.1.0"
 %mypath = $file.extractPath($0)
-addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Uninvited PM's", "4.9.2", $escape($file.localdir(pics/pmmanager_large.png)))
+addon.register("PM Manager", "%version", "PM Manager", "Manage Users and Block Uninvited PM's", "4.3.1", $escape($file.localdir(pics/pmmanager_large.png)))
 {
 	# This is our uninstall callback:
 	# it will be called by KVIrc when addon.uninstall is invoked
@@ -42,12 +43,8 @@ addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Unin
 	popup.delitem -d -q querytextview QUPM.users
 	popup.delitem -d -q querytextview QUPM.separator0
 
-	unset %G_qupmManager
-	unset %G_pmReplyMsg
-	unset %G_pmPMLog
-	unset %G_pmEState
-	unset %G_bDupeUser
-	unset %G_pmWhiteList
+	unset %G_qupmManager, %G_qupmSetup, %G_pmReplyMsg \
+	%G_pmPMLog, %G_pmEState, %G_bDupeUser, %G_pmWhiteList
 
 	if($file.exists($escape($file.localdir(config/scripts/PMM-Backup/QUPMM.kvc))))
 	{
@@ -65,7 +62,7 @@ addon.register("PM Manager", "1.0.0", "PM Manager", "Manage Users and Block Unin
 		}
 	}
 
-	echo -w=$active -i=$msgtype(GenericStatus) "Notice: PM Manager Addon v1.0.0 has been successfully removed."
+	echo -w=$active -i=$msgtype(GenericStatus) "Notice: PM Manager Addon v1.1.0 has been successfully removed."
 	qupm::uninstallfiles
 }
 
