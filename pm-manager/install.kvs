@@ -20,7 +20,7 @@
 ################################################################################
 # Register the script: this must be the first instruction executed
 # Since it will abort with an error when a greater version is already installed
-%version = "1.1.0"
+%version = "1.1.1"
 %mypath = $file.extractPath($0)
 addon.register("PM Manager", "%version", "PM Manager", "Manage Users and Block Uninvited PM's", "4.3.1", $escape($file.localdir(pics/pmmanager_large.png)))
 {
@@ -34,14 +34,14 @@ addon.register("PM Manager", "%version", "PM Manager", "Manage Users and Block U
 	if($window.exists(%temp))
 		window.close -q %temp;
 
-	popup.delitem -d -q channel QUPM.users
-	popup.delitem -d -q channel QUPM.separator0
-	popup.delitem -d -q channeltextview QUPM.controls
-	popup.delitem -d -q channeltextview QUPM.separator0
-	popup.delitem -q -q defaulttextview QUPM.users
-	popup.delitem -q -q defaulttextview QUPM.separator0
-	popup.delitem -d -q querytextview QUPM.users
-	popup.delitem -d -q querytextview QUPM.separator0
+	popup.delitem -d -q channel qupm.users
+	popup.delitem -d -q channel qupm.separator0
+	popup.delitem -d -q channeltextview qupm.controls
+	popup.delitem -d -q channeltextview qupm.separator0
+	popup.delitem -q -q defaulttextview qupm.users
+	popup.delitem -q -q defaulttextview qupm.separator0
+	popup.delitem -d -q querytextview qupm.users
+	popup.delitem -d -q querytextview qupm.separator0
 
 	unset %G_qupmManager, %G_qupmSetup, %G_pmReplyMsg \
 	%G_pmPMLog, %G_pmEState, %G_bDupeUser, %G_pmWhiteList
@@ -62,7 +62,7 @@ addon.register("PM Manager", "%version", "PM Manager", "Manage Users and Block U
 		}
 	}
 
-	echo -w=$active -i=$msgtype(GenericStatus) "Notice: PM Manager Addon v1.1.0 has been successfully removed."
+	echo -w=$active -i=$msgtype(GenericStatus) "Notice: PM Manager Addon v1.1.1 has been successfully removed."
 	qupm::uninstallfiles
 }
 

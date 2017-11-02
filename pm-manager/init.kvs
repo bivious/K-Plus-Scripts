@@ -23,7 +23,7 @@
 # Set the default configuration
 # Turn off the event as it is not needed until ready to run the function
 
-%version = "1.1.0"
+%version = "1.1.1"
 %pmoptions = $config.open(QUPMM.kvc)
 %G_pmReplyMsg = $config.read(%pmoptions, PMMSG, $false)
 %G_pmPMLog = $config.read(%pmoptions, PMLOG, $true)

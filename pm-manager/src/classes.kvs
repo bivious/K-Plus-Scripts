@@ -272,6 +272,14 @@ class("qupm::setup", "widget")
 			}
 		}
 
+		privateimpl(@%btnPMEdt, clickEvent)
+		{
+			%ereply = $b"[ Enter ]"$b
+			echo -w=$active -i=$msgtype(GenericWarning) "Notice: Edit your personalized message and press the %ereply key on your keyboard."
+			@$parent->$parent->%btnPMEdt->$setEnabled(0)
+			@$parent->$parent->%lnePMMsg->$setFocus()
+		}
+
 		privateimpl(@%btnPMRst, clickEvent)
 		{
 			@$parent->$parent->%lnePMMsg->$setText("Click here to add your own personalized message...")
@@ -281,15 +289,24 @@ class("qupm::setup", "widget")
 			@$parent->$parent->%btnPMAdd->$setEnabled(1)
 			@$parent->$parent->%btnPMRst->$setEnabled(0)
 			@$parent->$parent->%btnPMEdt->$setEnabled(0)
-			@%cfg_pmreply = $false
-		}
 
-		privateimpl(@%btnPMEdt, clickEvent)
-		{
-			%ereply = $b"[ Enter ]"$b
-			echo -w=$active -i=$msgtype(GenericWarning) "Notice: Edit your personalized message and press the %ereply key on your keyboard."
-			@$parent->$parent->%btnPMEdt->$setEnabled(0)
-			@$parent->$parent->%lnePMMsg->$setFocus()
+			%backupDirPath = $escape($file.localdir(config/scripts/PMM-Backup))
+
+			%filePMMConfig = "QUPMM.kvc"
+			%fileWhitelist = "mywhitelist.txt"
+
+			%sourcePathCfg = $escape($file.localdir(config/scripts/%filePMMConfig))
+			%destntPathCfg = $escape($file.localdir(config/scripts/PMM-Backup/%filePMMConfig))
+
+			%sourcePthWlst = $escape($file.localdir(%fileWhitelist))
+			%destntPthWlst = $escape($file.localdir(config/scripts/PMM-Backup/%fileWhitelist))
+
+			if(((!$file.exists(%backupDirPath)) && (!$file.exists(%destntPathCfg)) || (!$file.exists(%destntPthWlst))))
+				@$parent->$parent->%btnRstrC->$setEnabled(0)
+			else
+				@$parent->$parent->%btnRstrC->$setEnabled(1)
+			
+			@%cfg_pmreply = $false
 		}
 
 		privateimpl(@%btnSSave, clickEvent)
@@ -303,7 +320,7 @@ class("qupm::setup", "widget")
 			@$parent->$parent->$saveSetUp(@%cfg_pmreply, @%cfg_pmlog, @%cfg_status)
 			echo -w=$active -i=$msgtype(GenericVerbose) "Notice: The current settings have been saved."
 			%G_qupmManager->%btnOptions->$setEnabled(1)
-			delete @$parent->$parent
+			@$parent->$parent->%btnSSave->$setEnabled(0)
 		}
 
 		privateimpl(@%btnHelpf, clickEvent)
@@ -356,7 +373,7 @@ class("qupm::setup", "widget")
 			%restore = @$parent->$parent->$restoreBackup()
 			if(%restore == $true)
 			{
-				%G_qupmManager->%lbTrustedUsers->$clear()
+				%G_qupmManager->%lbTrustdUsrs->$clear()
 				%G_qupmManager->$loadList()
 				@$parent->$parent->$loadSetup()
 
@@ -579,12 +596,12 @@ class("qupm::main", "widget")
 		config.clearsection %conf whitelist
 		config.setsection %conf whitelist
 		unset %G_pmWhiteList
-		%count = $$->%lbTrustedUsers->$count()
+		%count = $$->%lbTrustdUsrs->$count()
 
 		for(%i = 0; %i < %count; %i++)
 		{
-			config.write %conf %i $$->%lbTrustedUsers->$textAt(%i)
-			%G_pmWhiteList[%i] = $$->%lbTrustedUsers->$textAt(%i)
+			config.write %conf %i $$->%lbTrustdUsrs->$textAt(%i)
+			%G_pmWhiteList[%i] = $$->%lbTrustdUsrs->$textAt(%i)
 		}
 
 		config.close %conf
@@ -613,23 +630,23 @@ class("qupm::main", "widget")
 
 			config.close %conf
 			unset %G_pmWhiteList
-			%G_qupmManager->%lbTrustedUsers->$clear()
+			%G_qupmManager->%lbTrustdUsrs->$clear()
 			%t = %trusteduser[]#
 
 			for(%i = 0; %i < %t; %i++)
 			{
-				@%lbTrustedUsers->$insertItem(%trusteduser[%i])
+				@%lbTrustdUsrs->$insertItem(%trusteduser[%i])
 				%G_pmWhiteList[%i] = %trusteduser[%i]
 			}
 		}
 
 		if($isSet($0))
 		{
-			%G_qupmManager->%lbChanUsers->$clear()
+			%G_qupmManager->%lbChanlUsers->$clear()
 			%channelusers = $chan.users($0)
 			foreach(%i,%channelusers)
 			{
-				@%lbChanUsers->$insertItem(%i)
+				@%lbChanlUsers->$insertItem(%i)
 			}
 		}
 		return $true
@@ -667,13 +684,13 @@ class("qupm::main", "widget")
 		@$setFocus()
 
 		@%hboxPMM = $new(hbox, $$)
-		@%vboxPMM = $new(vbox, $$)
-		@%vboxPMM->$setMargin(10)
-		@%vboxPMM->$setMinimumHeight(100)
-		@%vboxPMM->$setMaximumHeight(100)
+		@%vrtlboxQUPMM = $new(vbox, $$)
+		@%vrtlboxQUPMM->$setMargin(10)
+		@%vrtlboxQUPMM->$setMinimumHeight(100)
+		@%vrtlboxQUPMM->$setMaximumHeight(100)
 
-		@%hboxCMDS1 = $new(hbox, $$)
-		@%hboxCMDS2 = $new(hbox, $$)
+		@%hrzboxbCMDS1 = $new(hbox, $$)
+		@%hrzboxbCMDS2 = $new(hbox, $$)
 
 		@%tmpUserlabel = $new(label, $$)
 		@%tmpUserlabel->$setText("Enter a nickname:")
@@ -684,39 +701,39 @@ class("qupm::main", "widget")
 		if(%G_pmTmpUser != $null)
 			@%leTmpUserAdd->$setText(%G_pmTmpUser);
 
-		@%btnTmpUserAdd = $new(button, $$)
-		@%btnTmpUserAdd->$setText("A&dd User")
-		@%btnTmpUserAdd->$setTooltip("<p><pre>Click to add the user to your temporary whitelist.</pre></p>")
+		@%btnTmpUsrAdd = $new(button, $$)
+		@%btnTmpUsrAdd->$setText("A&dd User")
+		@%btnTmpUsrAdd->$setTooltip("<p><pre>Click to add the user to your temporary whitelist.</pre></p>")
 
 		if(%G_pmTmpUser != $null)
 		{
-			@%btnTmpUserAdd->$setText("Re&move User")
-			@%btnTmpUserAdd->$setTooltip("<p><pre>Click to remove the user from your temporary whitelist.</pre></p>")
+			@%btnTmpUsrAdd->$setText("Re&move User")
+			@%btnTmpUsrAdd->$setTooltip("<p><pre>Click to remove the user from your temporary whitelist.</pre></p>")
 		}
 
 		@%chanUserslbl = $new(label, $$)
 		@%chanUserslbl->$setText("Channel Users")
 
-		@%lbChanUsers = $new(listbox, $$)
-		@%lbChanUsers->$setToolTip("<p><pre>Highlight the user to add to your whitelist.</pre></p>")
+		@%lbChanlUsers = $new(listbox, $$)
+		@%lbChanlUsers->$setToolTip("<p><pre>Highlight the user to add to your whitelist.</pre></p>")
 
-		@%btnAddUser = $new(button, @%vboxPMM)
+		@%btnAddUser = $new(button, @%vrtlboxQUPMM)
 		@%btnAddUser->$setTooltip("<p><pre>Add the highlighted user to the whitelist.</pre></p>")
 		@%btnAddUser->$setMaximumWidth(50)
 		@%btnAddUser->$setImage(39)
 
-		@%btnRemUser = $new(button, @%vboxPMM)
+		@%btnRemUser = $new(button, @%vrtlboxQUPMM)
 		@%btnRemUser->$setTooltip("<p><pre>Remove the highlighted user from the whitelist.</pre></p>")
 		@%btnRemUser->$setMaximumWidth(50)
 		@%btnRemUser->$setImage(40)
 
-		@%trustUserslbl = $new(label, $$)
-		@%trustUserslbl->$setText("Whitelisted Users")
+		@%trustUsrslbl = $new(label, $$)
+		@%trustUsrslbl->$setText("Whitelisted Users")
 
-		@%lbTrustedUsers = $new(listbox, $$)
-		@%lbTrustedUsers->$setToolTip("<p><pre>Highlight the user to remove from the whitelist.</pre></p>")
+		@%lbTrustdUsrs = $new(listbox, $$)
+		@%lbTrustdUsrs->$setToolTip("<p><pre>Highlight the user to remove from the whitelist.</pre></p>")
 
-		@%btnPMStatus = $new(button, @%hboxCMDS1)
+		@%btnPMStatus = $new(button, @%hrzboxbCMDS1)
 		@%btnPMStatus->$setText("&Blocker ON")
 		@%btnPMStatus->$setTooltip("<p><pre>Click to enable the PM blocker.</pre></p>")
 
@@ -726,32 +743,32 @@ class("qupm::main", "widget")
 			@%btnPMStatus->$setTooltip("<p><pre>Click to disable the PM blocker.</pre></p>")
 		}
 
-		@%btnOptions = $new(button, @%hboxCMDS2)
+		@%btnOptions = $new(button, @%hrzboxbCMDS2)
 		@%btnOptions->$setText("&Options")
 		@%btnOptions->$setTooltip("<p><pre>Set the personalized message and notification options.</pre></p>")
 
-		@%btnRfrsh = $new(button, @%hboxCMDS1)
+		@%btnRfrsh = $new(button, @%hrzboxbCMDS1)
 		@%btnRfrsh->$setText("&Refresh")
 		@%btnRfrsh->$setTooltip("<p><pre>Refresh the channel users list.</pre></p>")
 
-		@%btnExit = $new(button, @%hboxCMDS2)
+		@%btnExit = $new(button, @%hrzboxbCMDS2)
 		@%btnExit->$setText("&Exit")
 		@%btnExit->$setTooltip("<p><pre>Exit the PM Manager.</pre></p>")
 
 		@%layout->$addMultiCellWidget(@%tmpUserlabel, 0,0,0,1)
 		@%layout->$addMultiCellWidget(@%leTmpUserAdd, 0,0,2,4)
-		@%layout->$addMultiCellWidget(@%btnTmpUserAdd, 0,0,5,5)
+		@%layout->$addMultiCellWidget(@%btnTmpUsrAdd, 0,0,5,5)
 
 		@%layout->$addMultiCellWidget(@%chanUserslbl, 1,1,0,2)
-		@%layout->$addMultiCellWidget(@%trustUserslbl, 1,1,4,5)
+		@%layout->$addMultiCellWidget(@%trustUsrslbl, 1,1,4,5)
 
-		@%layout->$addMultiCellWidget(@%vboxPMM, 7,12,3,3)
+		@%layout->$addMultiCellWidget(@%vrtlboxQUPMM, 7,12,3,3)
 
-		@%layout->$addMultiCellWidget(@%lbChanUsers, 2,18,0,2)
-		@%layout->$addMultiCellWidget(@%lbTrustedUsers, 2,18,4,5)
+		@%layout->$addMultiCellWidget(@%lbChanlUsers, 2,18,0,2)
+		@%layout->$addMultiCellWidget(@%lbTrustdUsrs, 2,18,4,5)
 
-		@%layout->$addMultiCellWidget(@%hboxCMDS1, 19,19,0,2)
-		@%layout->$addMultiCellWidget(@%hboxCMDS2, 19,19,4,5)
+		@%layout->$addMultiCellWidget(@%hrzboxbCMDS1, 19,19,0,2)
+		@%layout->$addMultiCellWidget(@%hrzboxbCMDS2, 19,19,4,5)
 
 		privateimpl(@%leTmpUserAdd, mousePressEvent)
 		{
@@ -765,14 +782,14 @@ class("qupm::main", "widget")
 				@$emit("enterPressed")
 		}
 
-		objects.connect @%leTmpUserAdd enterPressed @%btnTmpUserAdd clickEvent
-		privateimpl(@%btnTmpUserAdd, clickEvent)
+		objects.connect @%leTmpUserAdd enterPressed @%btnTmpUsrAdd clickEvent
+		privateimpl(@%btnTmpUsrAdd, clickEvent)
 		{
 			if(%G_pmTmpUser != $null)
 			{
 				@$parent->%leTmpUserAdd->$setText("Type a temporary nick here...")
-				@$parent->%btnTmpUserAdd->$setText("A&dd User")
-				@$parent->%btnTmpUserAdd->$setTooltip("<p><pre>Click to add the temporary user.</pre></p>")
+				@$parent->%btnTmpUsrAdd->$setText("A&dd User")
+				@$parent->%btnTmpUsrAdd->$setTooltip("<p><pre>Click to add the temporary user.</pre></p>")
 				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The user $b%G_pmTmpUser$b has been successfully removed from your temporary whitelist."
 				unset %G_pmTmpUser
 				halt;
@@ -805,8 +822,8 @@ class("qupm::main", "widget")
 			if($isWellKnown(%user))
 			{
 				%G_pmTmpUser = %user
-				@$parent->%btnTmpUserAdd->$setText("Re&move User")
-				@$parent->%btnTmpUserAdd->$setTooltip("<p><pre>Click to remove the temporary user.</pre></p>")
+				@$parent->%btnTmpUsrAdd->$setText("Re&move User")
+				@$parent->%btnTmpUsrAdd->$setTooltip("<p><pre>Click to remove the temporary user.</pre></p>")
 				echo -w=$active -i=$msgtype(GenericStatus) "Notice: The user $b%user$b has been successfully added to your temporary whitelist."
 				halt;
 			}
@@ -820,21 +837,21 @@ class("qupm::main", "widget")
 
 		privateimpl(@%btnAddUser, clickEvent)
 		{
-			%count = @$parent->$parent->%lbChanUsers->$count()
+			%count = @$parent->$parent->%lbChanlUsers->$count()
 			if(%count == "0")
 			{
 				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The Channel Users list is empty or there are no users to add."
 				halt;
 			}
 
-			%selectedid = @$parent->$parent->%lbChanUsers->$currentItem()
+			%selectedid = @$parent->$parent->%lbChanlUsers->$currentItem()
 			if(%selectedid == "-1")
 			{
 				echo -w=$active -i=$msgtype(GenericWarning) "Notice: No nick selection was made. Select a nick to add and try again."
 				halt;
 			}
 
-			%item = @$parent->$parent->%lbChanUsers->$textAt(%selectedid)
+			%item = @$parent->$parent->%lbChanlUsers->$textAt(%selectedid)
 			if($my.nick == %item)
 			{
 				echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b%item$b is yours. No need to add yourself."
@@ -845,22 +862,22 @@ class("qupm::main", "widget")
 
 		privateimpl(@%btnRemUser, clickEvent)
 		{
-			%count = @$parent->$parent->%lbTrustedUsers->$count()
+			%count = @$parent->$parent->%lbTrustdUsrs->$count()
 			if(%count == "0")
 			{
 				echo -w=$active -i=$msgtype(GenericWarning) "Notice: Your whitelist is empty. No users to remove."
 				halt;
 			}
 
-			%selectedid = @$parent->$parent->%lbTrustedUsers->$currentItem()
+			%selectedid = @$parent->$parent->%lbTrustdUsrs->$currentItem()
 			if(%selectedid == "-1")
 			{
 				echo -w=$active -i=$msgtype(GenericWarning) "Notice: No nick selection was made. Select a nick to remove and try again."
 				halt;
 			}
 
-			%user = @$parent->$parent->%lbTrustedUsers->$textAt(%selectedid)
-			@$parent->$parent->%lbTrustedUsers->$removeItem(%selectedid)
+			%user = @$parent->$parent->%lbTrustdUsrs->$textAt(%selectedid)
+			@$parent->$parent->%lbTrustdUsrs->$removeItem(%selectedid)
 			echo -w=$active -i=$msgtype(GenericWarning) "Notice: The nick $b%user$b has been successfully removed from your whitelist."
 			@$parent->$parent->$saveList(1)
 		}
@@ -944,12 +961,12 @@ class("qupm::main", "widget")
 
 	function checkDupe($0 = nick)
 	{
-		%count = $$->%lbTrustedUsers->$count()
+		%count = $$->%lbTrustdUsrs->$count()
 		%user = $0
 
 		for(%i = 0; %i < %count; %i++)
 		{
-			if($$->%lbTrustedUsers->$textAt(%i) == %user)
+			if($$->%lbTrustdUsrs->$textAt(%i) == %user)
 			{
 				echo -w=$active -i=$msgtype(GenericWarning) "Duplicated Entry: The nick $b%user$b has already been added to whitelist!"
 				%G_bDupeUser = $true
@@ -957,16 +974,16 @@ class("qupm::main", "widget")
 			}
 		}
 
-		$$->%lbTrustedUsers->$insertItem(%user)
+		$$->%lbTrustdUsrs->$insertItem(%user)
 		%G_pmWhiteList[] <+ %user
 		echo -w=$active -i=$msgtype(GenericStatus) "Notice: The nick $b%user$b has been successfully added to your whitelist."
-		%count = $$->%lbChanUsers->$count()
+		%count = $$->%lbChanlUsers->$count()
 
 		for(%i = 0; %i < %count; %i++)
 		{
-			if($$->%lbChanUsers->$textAt(%i) == %user)
+			if($$->%lbChanlUsers->$textAt(%i) == %user)
 			{
-				$$->%lbChanUsers->$removeItem(%i)
+				$$->%lbChanlUsers->$removeItem(%i)
 				break;
 			}
 		}

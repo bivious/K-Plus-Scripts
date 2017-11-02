@@ -2,7 +2,7 @@
 
 Welcome, to the PM Manager Addon.
 
-The PM Manager is user manageable global private message blocker for KVIrc 4.9.2.
+The PM Manager is user manageable global private message blocker for KVIrc from v4.3.1 to v4.9.2.
 It features simple but comprehensive dialogs and context menu entries designed to easily allow the whitelisting of users temporarily or permanently.
 
 The PM Manager features a in active window notification system, that also shows you and the blocked user of any filtered PM by default.
@@ -36,10 +36,10 @@ Once you have the files extracted.
   then select the `install.kvs` file and click open.
 
 #### From Binary
-* Click [here to download the PM_Manager_$version.zip](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/PM_Manager-1.1.0.zip "PM_Manager-1.1.0.zip") verify [SHA256 Checksum](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/sha256sum.txt "sha256sum.txt") and extract it.
+* Click [here to download the PM_Manager_$version.zip](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/PM_Manager-1.1.1.zip "PM_Manager-1.1.1.zip") verify [SHA256 Checksum](https://github.com/bivious/k-plus-scripts/raw/pm-manager/pm-manager/sha256sum.txt "sha256sum.txt") and extract it.
 ###### SHA256 Checksum
 ```hash
-e426d61ddcb8a5d46aeda6e2efd107035042f21f1b98139d507351f84de3f386
+11cd5ba1a84debe1920d5b8f798a464fb6ee25490e4c8490b6f7123382ed2706
 ```
 
 * Goto Settings menu or press `Ctrl+Shft+N`
@@ -48,9 +48,9 @@ e426d61ddcb8a5d46aeda6e2efd107035042f21f1b98139d507351f84de3f386
 
 You should see the following lines (no matter the install method used):
 ```
-Attempting to register addon "PM Manager" with version 1.0.0
+Attempting to register addon "PM Manager" with version 1.1.1
 Addon successfully registered
-Notice: PM Manager Addon Version - 1.0.0  Initialization Complete.
+Notice: PM Manager Addon Version - 1.1.1  Initialization Complete.
 ```
 
 ### Uninstall
@@ -63,7 +63,7 @@ Notice: PM Manager Addon Version - 1.0.0  Initialization Complete.
 
 You should see the following message:
 ```
-Notice: PM Manager Addon v1.0.0 has been successfully removed.
+Notice: PM Manager Addon v1.1.1 has been successfully removed.
 ```
 
 ### Screenshots
